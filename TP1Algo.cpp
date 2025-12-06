@@ -8,32 +8,13 @@
 #include "build/Command.h"
 #include <SDL3_ttf/SDL_ttf.h>
 
+#include "build/TextBox.h"
+
 std::atomic<bool> running = true;
 
-void InputThreadFunc(QueueHandler* queueHandler)
+void RefreshRender(Player* player)
 {
-    while (running)
-    {
-        std::string line;
-        std::getline(std::cin, line);
-
-        if (line == "quit" || line == "exit") {
-            running = false;
-            break;
-        }
-
-        // Parse & syntax-check
-        Command* cmd = queueHandler->parse_and_validate(line);
-        if (cmd)
-        {
-            cmd->pre_execute(queueHandler);
-            if (cmd->is_edit_command()) delete cmd;  // Clean up if it's an edit command
-        }
-        else
-        {
-            std::cout << "[Invalid Command]\n";
-        }
-    }
+    
 }
 
 int main(int argc, char* argv[])
@@ -59,12 +40,22 @@ int main(int argc, char* argv[])
     }
     std::cout << "Window created successfully\n";
 
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+    if (!renderer) {
+        std::cout << "SDL_CreateRenderer failed: " << SDL_GetError() << "\n";
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+    std::cout << "Renderer created successfully\n";
+    TTF_Init();
     QueueHandler queueHandler;
     Player* player = new Player();
-
-    // Starting the Input thread
-    std::thread inputThread(InputThreadFunc, &queueHandler);
-    inputThread.detach();  // Détache le thread pour qu'il ne bloque pas la fermeture
+    queueHandler.set_player(player);
+    TextBox text_box = TextBox(&queueHandler);
+    SDL_StartTextInput(window);
+    
+    
     std::cout << "Entering main loop. Type 'quit' or 'exit' to close, or close the window.\n";
     Uint64 last_time = SDL_GetTicks();
     // GAME LOOP
@@ -82,6 +73,11 @@ int main(int argc, char* argv[])
             {
                 running = false;
             }
+            if (event.type == SDL_EVENT_TEXT_INPUT || event.type == SDL_EVENT_KEY_DOWN)
+            {
+                text_box.handle_event(event);
+                //std::cout << "listening to stuff" << " text: " << SDL_EVENT_TEXT_INPUT << ", Key: " << SDL_EVENT_KEY_DOWN << " " << event.type << "\n";
+            }
         }
 
         if (!queueHandler.isEmpty())
@@ -89,10 +85,16 @@ int main(int argc, char* argv[])
             // Execute the current command
             queueHandler.front()->execute(delta_time);
         }
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fond noir
+        SDL_RenderClear(renderer);
 
+        text_box.render(renderer);
+        
+        SDL_RenderPresent(renderer);
         SDL_Delay(16);  // Attend 1/60 de seconde
     }
     
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;

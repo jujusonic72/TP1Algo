@@ -1,7 +1,7 @@
 #include "Player.h"
 
 Player::Player()
-    : health(100), damage(10), attackRange(1), speed(5), position{0, 0}
+    : health(100), damage(10), attackRange(1), speed(50), position{0, 0}
 {
 }
 

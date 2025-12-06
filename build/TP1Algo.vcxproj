@@ -364,10 +364,23 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Command.cpp" />
+    <ClCompile Include="Commands\CancelCommand.cpp" />
+    <ClCompile Include="Commands\MoveCommand.cpp" />
     <ClCompile Include="F:\Documents\UQAT\algoJeux\TP\TP1Algo\TP1Algo.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Position.cpp" />
+    <ClCompile Include="QueueHandler.cpp" />
     <ClCompile Include="TextBox.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Command.h" />
+    <ClInclude Include="Commands\CancelCommand.h" />
+    <ClInclude Include="Commands\MoveCommand.h" />
+    <ClInclude Include="NodeList.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Position.h" />
+    <ClInclude Include="QueueHandler.h" />
     <ClInclude Include="TextBox.h" />
   </ItemGroup>
   <ItemGroup>

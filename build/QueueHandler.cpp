@@ -16,7 +16,7 @@ void QueueHandler::nextCommand()
 {
     delete front();
     list.eraseFront();
-    
+    std::cout << "removed finished command \n";
 }
 
 void QueueHandler::removeCommandAtPosition(int position)
@@ -70,21 +70,23 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
         switch (cmd)
         {
         case move:
-            Position pos;
-            if (cmdComponents.size() == 3)
             {
-                pos = {std::stoi(cmdComponents[1]), std::stoi(cmdComponents[2])};
+                Position pos;
+                if (cmdComponents.size() == 3)
+                {
+                    pos = {std::stof(cmdComponents[1]), std::stof(cmdComponents[2])};
+                }
+                else
+                {
+                    std::cerr << "Error: Invalid position for move command" << "\n";
+                    return nullptr;
+                }
+                // Créer et retourner un MoveCommand
+                command = new MoveCommand(pos);
+                std::cout << "Moving to {" << pos.x << ", " << pos.y << "}";
+                std::cout << "\n";
+                return command;
             }
-            else
-            {
-                std::cerr << "Error: Invalid position for move command" << "\n";
-                return nullptr;
-            }
-            // Créer et retourner un MoveCommand
-            command = new MoveCommand(pos);
-            std::cout << "Moving to {" << pos.x << ", " << pos.y << "}";
-            std::cout << "\n";
-            return command;
         case attack:
             // Créer et retourner un AttackCommand
             //command = new MoveCommand();
