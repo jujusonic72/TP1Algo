@@ -1,33 +1,20 @@
-# Prerequisites
-*.d
+# Dossier de build
+build/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
+# Fichiers Visual Studio
+.vs/
+*.user
+*.suo
+
+# Fichiers temporaires
 *.obj
+*.exe
+*.dll
+*.pdb
+# MAIS inclure explicitement external/
+!external/**/*.dll
+!external/**/*.lib
 
-# Precompiled Headers
-#*.gch
-#*.pch
-#
-## Compiled Dynamic libraries
-#*.so
-#*.dylib
-#*.dll
-#
-## Fortran module files
-#*.mod
-#*.smod
-#
-## Compiled Static libraries
-##*.lai
-##*.la
-##*.a
-##*.lib
-#
-## Executables
-#*.exe
-#*.out
-#*.app
-#
+# Dossiers de cache IDE
+.vscode/
+.idea/
