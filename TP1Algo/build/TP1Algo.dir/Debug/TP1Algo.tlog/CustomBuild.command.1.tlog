@@ -1,0 +1,10 @@
+^F:\DOCUMENTS\UQAT\ALGOJEUX\TP\TP1ALGO\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SF:/Documents/UQAT/algoJeux/TP/TP1Algo -BF:/Documents/UQAT/algoJeux/TP/TP1Algo/build --check-stamp-file F:/Documents/UQAT/algoJeux/TP/TP1Algo/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
