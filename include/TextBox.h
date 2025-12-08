@@ -84,6 +84,7 @@ inline void TextBox::handle_event(const SDL_Event& e)
                     }
                     text_.clear();
                     cursor_pos_ = 0;
+                    history_index_ = -1;
                 }
                 break;
         case SDLK_LEFT:
@@ -132,21 +133,50 @@ inline void TextBox::handle_event(const SDL_Event& e)
 
 inline void TextBox::render(SDL_Renderer* renderer)
 {
+    Uint64 current_time = SDL_GetTicks();
+    if (current_time - last_cursor_toggle_time_ >= 500) {  // 500ms
+        cursor_visible_ = !cursor_visible_;
+        last_cursor_toggle_time_ = current_time;
+    }
     // Dessiner le fond de la TextBox (gris foncé)
     SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
     SDL_FRect box_rect = {
-        // TODO: remplir avec les bonnes valeurs
         static_cast<float>(box_pos_.x),
         static_cast<float>(box_pos_.y),
         static_cast<float>(width_),
         static_cast<float>(height_)
     };
     SDL_RenderFillRect(renderer, &box_rect);
+    if (cursor_visible_) {
+    // Calculer la position X du curseur
+    int cursor_x = box_pos_.x + 5;  // Commencer au padding
+    
+    if (cursor_pos_ > 0 && !text_.empty()) {
+    std::string text_before_cursor = text_.substr(0, cursor_pos_);
+    
+    // Créer une surface temporaire pour mesurer la largeur
+    SDL_Color temp_color = {255, 255, 255, 255};
+    SDL_Surface* temp_surface = TTF_RenderText_Solid(font_, 
+                                                      text_before_cursor.c_str(), 
+                                                      text_before_cursor.size(), 
+                                                      temp_color);
+    if (temp_surface) {
+        cursor_x += temp_surface->w;
+        SDL_DestroySurface(temp_surface);
+    }
+}
+    
+    // Dessiner une ligne verticale blanche
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // Blanc
+    SDL_RenderLine(renderer, 
+                   cursor_x, box_pos_.y + 5,           // Point de départ (haut)
+                   cursor_x, box_pos_.y + height_ - 5  // Point d'arrivée (bas)
+    );
+}
     if (!text_.empty()) {
         SDL_Color text_color = {255, 255, 255, 255};
         SDL_Surface* text_surface = TTF_RenderText_Solid(font_, text_.c_str(), text_.size(), text_color);
     
-        // Vérification 1 : La surface a-t-elle été créée ?
         if (!text_surface) {
             std::cout << "Failed to create text surface: " << SDL_GetError() << "\n";
             return;
@@ -154,7 +184,6 @@ inline void TextBox::render(SDL_Renderer* renderer)
     
         SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
     
-        // Vérification 2 : La texture a-t-elle été créée ?
         if (!text_texture) {
             std::cout << "Failed to create text texture: " << SDL_GetError() << "\n";
             SDL_DestroySurface(text_surface);
