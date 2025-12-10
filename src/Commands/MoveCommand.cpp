@@ -45,7 +45,7 @@ void MoveCommand::update_position(Uint64 delta_time)
         set_finished(true);
         return;
     }
-    std::cout << "Move from {" << player_pos.x << "," << player_pos.y << "} to {" << dirx * move_distance << "," << diry * move_distance << "}" << "\n";
+    //std::cout << "Move from {" << player_pos.x << "," << player_pos.y << "} to {" << player_pos.x + (dirx * move_distance) << "," << player_pos.y + (diry * move_distance) << "}" << "\n";
     player_pos.x += dirx * move_distance;
     player_pos.y += diry * move_distance;
     player->SetPosition(player_pos);

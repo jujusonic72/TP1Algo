@@ -65,12 +65,12 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
     }
     try
     {
-        cmdEnum cmd = string_to_command(cmdComponents[0]);
+
+        //cmdEnum cmd = string_to_command(cmdComponents[0]);
+        std::string cmd = cmdComponents[0];
         Command* command = nullptr;
-        switch (cmd)
+        if(cmd == "move")
         {
-        case move:
-            {
                 Position pos;
                 if (cmdComponents.size() == 3)
                 {
@@ -86,18 +86,23 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
                 std::cout << "Moving to {" << pos.x << ", " << pos.y << "}";
                 std::cout << "\n";
                 return command;
-            }
-        case attack:
+        }
+        else if(cmd == "attack")
+        {
             // Créer et retourner un AttackCommand
             //command = new MoveCommand();
             std::cout << "Attacking" << "\n";
             return command;
-        case gather:
+        }
+        else if(cmd == "gather")
+        {
             // Créer et retourner un GatherCommand
             //command = new MoveCommand();
             std::cout << "Gathering" << "\n";
             return command;
-        case use:
+        }
+        else if(cmd == "use")
+        {
             if (cmdComponents.size() != 2)
             {
                 std::cerr << "Error: Invalid item for use command" << "\n";
@@ -109,7 +114,50 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             std::cout << "\n";
             return command;
         }
-        std::cerr << "Error: Invalid command passed" << "\n";
+        //else if(cmd == ""){}
+        // switch (cmd)
+        // {
+        // case move:
+        //     {
+        //         Position pos;
+        //         if (cmdComponents.size() == 3)
+        //         {
+        //             pos = {std::stof(cmdComponents[1]), std::stof(cmdComponents[2])};
+        //         }
+        //         else
+        //         {
+        //             std::cerr << "Error: Invalid position for move command" << "\n";
+        //             return nullptr;
+        //         }
+        //         // Créer et retourner un MoveCommand
+        //         command = new MoveCommand(pos);
+        //         std::cout << "Moving to {" << pos.x << ", " << pos.y << "}";
+        //         std::cout << "\n";
+        //         return command;
+        //     }
+        // case attack:
+        //     // Créer et retourner un AttackCommand
+        //     //command = new MoveCommand();
+        //     std::cout << "Attacking" << "\n";
+        //     return command;
+        // case gather:
+        //     // Créer et retourner un GatherCommand
+        //     //command = new MoveCommand();
+        //     std::cout << "Gathering" << "\n";
+        //     return command;
+        // case use:
+        //     if (cmdComponents.size() != 2)
+        //     {
+        //         std::cerr << "Error: Invalid item for use command" << "\n";
+        //         return nullptr;
+        //     }
+        //     // Créer et retourner un UseCommand
+        //     //command = new MoveCommand();
+        //     std::cout << "Using: " << cmdComponents[1];
+        //     std::cout << "\n";
+        //     return command;
+        // }
+        // std::cerr << "Error: Invalid command passed" << "\n";
         return nullptr;
     }
     catch (const std::invalid_argument& e)

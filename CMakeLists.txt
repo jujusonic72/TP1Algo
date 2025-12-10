@@ -31,3 +31,11 @@ add_custom_command(TARGET TP1Algo POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:TP1Algo>/assets
 )
+add_custom_command(TARGET TP1Algo POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_SOURCE_DIR}/external/SDL3/SDL3-3.2.26/lib/x64/SDL3.dll $<TARGET_FILE_DIR:TP1Algo>
+)
+add_custom_command(TARGET TP1Algo POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_SOURCE_DIR}/external/SDL3/SDL3_ttf-3.2.2/lib/x64/SDL3_ttf.dll $<TARGET_FILE_DIR:TP1Algo>
+)

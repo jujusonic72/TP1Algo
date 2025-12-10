@@ -108,22 +108,24 @@ inline void TextBox::handle_event(const SDL_Event& e)
                 text_ = *it;
                 cursor_pos_ = text_.size();
             }
+            //cout << history_index_ << "\n";
             break;
 		case SDLK_DOWN:
             if (history_index_ > 0)
             {
                 --history_index_;
                 auto it = history_->end();
-                for (int i = 0; i < history_index_; ++i) --it;
+                for (int i = 0; i < history_index_ + 1; ++i) --it;
                 text_ = *it;
                 cursor_pos_ = text_.size();
             }
             else if (history_index_ == 0)
             {
-                --history_index_;
+                history_index_ = -1;
                 text_.clear();
                 cursor_pos_ = 0;
             }
+            //cout << history_index_ << "\n";
             break;
 		default:
             break;
