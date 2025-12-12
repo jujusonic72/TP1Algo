@@ -14,7 +14,7 @@ Player::~Player()
     }
 }
 
-bool Player::loadSprite(SDL_Renderer* renderer, const char* filepath)
+bool Player::loadSprite(SDL_Renderer* renderer, const char* filepath, int target_size)
 {
     SDL_Surface* surface = IMG_Load(filepath);
     if (!surface) {
@@ -22,8 +22,9 @@ bool Player::loadSprite(SDL_Renderer* renderer, const char* filepath)
         return false;
     }
     
-    sprite_width = surface->w;
-    sprite_height = surface->h;
+    // Redimensionner à la taille cible
+    sprite_width = surface->w * (target_size/100);
+    sprite_height = surface->h * (target_size/100);
     
     sprite_texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_DestroySurface(surface);
@@ -43,7 +44,7 @@ void Player::render(SDL_Renderer* renderer, Position screen_pos)
         std::cout << "No sprite texture loaded!\n";
         return;
     }
-    std::cout << "Rendering player at screen: (" << screen_pos.x << ", " << screen_pos.y << ")\n";
+    //std::cout << "Rendering player at screen: (" << screen_pos.x << ", " << screen_pos.y << ")\n";
     SDL_FRect dest = {
         static_cast<float>(screen_pos.x - sprite_width/2),
         static_cast<float>(screen_pos.y - sprite_height/2),

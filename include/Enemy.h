@@ -1,0 +1,102 @@
+//includes
+#include "Player.h"
+#include "Position.h"
+#include <SDL3/SDL_render.h>
+#include <SDL3_image/SDL_image.h>
+#include <iostream>
+class Enemy
+{
+public:
+    //Contructor
+    Enemy(int health, int damage, int cooldown_time, int attack_range, Position spawn_pos)
+        : hp(health), dmg(damage), spd(cooldown_time), rng(attack_range), world_pos(spawn_pos) {}
+    
+    int getHealth() const {return hp;}
+    void SetHealth(int newHealth) {hp = newHealth;}
+    
+    int getDamage() const {return dmg;}
+    void SetDamage(int newDamage) {dmg = newDamage;}
+
+    int getAttackRange() const {return rng;}
+    void SetAttackRange(int newAttackRange) {rng = newAttackRange;}
+    
+    int getSpeed() const {return spd;}
+    void SetSpeed(int newSpeed) {hp = newSpeed;}
+    
+    Position getPosition() const {return world_pos;}
+    void SetPosition(Position newPosition) {world_pos = newPosition;}
+
+    // méthodes pour le rendu
+    bool loadSprite(SDL_Renderer* renderer, int target_size = 64)
+    {
+
+        SDL_Surface* surface = IMG_Load(sprite_path);
+        if (!surface) {
+            std::cout << "Failed to load sprite: " << SDL_GetError() << "\n";
+            return false;
+        }
+
+        // Redimensionner à la taille cible
+        sprite_width = surface->w * (target_size/100);
+        sprite_height = surface->h * (target_size/100);
+
+        sprite_texture = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_DestroySurface(surface);
+
+        if (!sprite_texture) {
+            std::cout << "Failed to create texture: " << SDL_GetError() << "\n";
+            return false;
+        }
+
+        std::cout << "Sprite loaded successfully: " << sprite_path << "\n";
+        return true;
+    }
+    void render(SDL_Renderer* renderer, Position screen_pos)
+    {
+        if (!sprite_texture) {
+            std::cout << "No sprite texture loaded!\n";
+            return;
+        }
+        //std::cout << "Rendering player at screen: (" << screen_pos.x << ", " << screen_pos.y << ")\n";
+        SDL_FRect dest = {
+            static_cast<float>(screen_pos.x - sprite_width/2),
+            static_cast<float>(screen_pos.y - sprite_height/2),
+            static_cast<float>(sprite_width),
+            static_cast<float>(sprite_height)
+        };
+
+        SDL_RenderTexture(renderer, sprite_texture, nullptr, &dest);
+    }
+
+    void update(Uint64 delta_time, Player* player)
+    {
+        // Calculer distance au joueur
+        Position player_pos = player->getPosition();
+        float dx = player_pos.x - world_pos.x;
+        float dy = player_pos.y - world_pos.y;
+        float distance = sqrt(dx*dx + dy*dy);
+
+        // Si joueur à portée et cooldown écoulé
+        if (distance <= rng) {
+            Uint64 current_time = SDL_GetTicks();
+            if (current_time - last_attack_time >= spd) {
+                // Attaquer !
+                player->SetHealth(player->getHealth() - dmg);
+                last_attack_time = current_time;
+                std::cout << "Enemy attacked! Player HP: " << player->getHealth() << "\n";
+            }
+        }
+    }
+
+private:
+    Uint64 last_attack_time = 0;
+
+protected:
+    Position world_pos;
+    int hp, dmg, spd, rng;
+
+    SDL_Texture* sprite_texture = nullptr;
+    const char* sprite_path = "./assets/sprites/Enemy.png";
+    int sprite_width = 0;                 
+    int sprite_height = 0;
+};

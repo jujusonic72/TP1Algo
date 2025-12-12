@@ -1,4 +1,5 @@
 #pragma once
+#include "NodeList.h"
 #include "Player.h"
 #include "Position.h"
 #include <iostream>
@@ -28,6 +29,8 @@ public:
         screen_pos.y = center_screen.y + (world_pos.y - player_pos().y);
         return screen_pos;
      }
+
+    
     
 private:
     Position center_screen;

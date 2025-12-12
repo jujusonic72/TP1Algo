@@ -24,7 +24,7 @@ public:
     void SetPosition(Position newPosition);
 
     // méthodes pour le rendu
-    bool loadSprite(SDL_Renderer* renderer, const char* filepath);
+    bool loadSprite(SDL_Renderer* renderer, const char* filepath, int target_size = 64);
     void render(SDL_Renderer* renderer, Position screen_pos);
 
 protected:

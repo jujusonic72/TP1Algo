@@ -10,6 +10,8 @@
 #include "Camera.h"
 #include "../include/TextBox.h"
 #include <SDL3_image/SDL_image.h>
+#include "NodeList.h"
+#include "Enemy.h"
 
 /*TODO:
 - Faire une classe Enemy
@@ -66,14 +68,35 @@ int main(int argc, char* argv[])
     TTF_Init();
     QueueHandler queueHandler;
     Player* player = new Player();
+    //Liste des ennemies
+    NodeList<Enemy*> enemies;
+
+    // Spawn quelques ennemis
+    enemies.insertBack(new Enemy(50, 10, 2000, 100, {200, 200}));
+    enemies.insertBack(new Enemy(50, 10, 2000, 100, {-200, -200}));
+    enemies.insertBack(new Enemy(50, 10, 2000, 100, {300, 150}));
+    
+    
 
     // Charger le sprite du joueur
-if (!player->loadSprite(renderer, "./assets/sprites/Player.png")) {
+if (!player->loadSprite(renderer, "./assets/sprites/Hero.png")) {
     std::cout << "Warning: Could not load player sprite\n";
 }
     Camera camera(window_width, window_height, player);
     queueHandler.set_player(player);
     TextBox text_box = TextBox(&queueHandler);
+    // Charger le sprite des ennemis
+    if(!enemies.empty())
+    {
+        auto it = enemies.begin();
+        while (it != enemies.end()) {
+            Enemy* enemy = *it;
+            enemy->loadSprite(renderer);
+            ++it;
+        }      
+    }
+    
+
     SDL_StartTextInput(window);
     
     
@@ -106,20 +129,42 @@ if (!player->loadSprite(renderer, "./assets/sprites/Player.png")) {
             // Execute the current command
             queueHandler.front()->execute(delta_time);
         }
+
+        if(!enemies.empty())
+        {
+            auto it = enemies.begin();
+            while (it != enemies.end()) {
+            Enemy* enemy = *it;
+            enemy->update(delta_time, player);
+            ++it;
+            }
+        }
+
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fond noir
         SDL_RenderClear(renderer);
         // Dessiner le joueur
         Position player_world = player->getPosition();
-        std::cout << "Player world pos: (" << player_world.x << ", " << player_world.y << ")\n";
+        //std::cout << "Player world pos: (" << player_world.x << ", " << player_world.y << ")\n";
         Position player_screen = camera.pos_to_screen(player_world);
-        std::cout << "Player screen pos: (" << player_screen.x << ", " << player_screen.y << ")\n";
+        //std::cout << "Player screen pos: (" << player_screen.x << ", " << player_screen.y << ")\n";
 
-        player->render(renderer, player_screen);
+        player->loadSprite(renderer, "./assets/sprites/Player.png", 64);
+        for (auto & enemie : enemies) { enemie->loadSprite(renderer, 32); }   
+        
+
         text_box.render(renderer);
         
         SDL_RenderPresent(renderer);
 
         SDL_Delay(16);  // Attend 1/60 de seconde
+    }
+
+    //cleanup
+    while (!enemies.empty()) 
+    {
+        Enemy* enemy = *enemies.begin();
+        delete enemy;
+        enemies.eraseFront();
     }
     delete player;
     SDL_DestroyRenderer(renderer);
