@@ -1,4 +1,5 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
 #include <thread>
 #include <atomic>
 #include <iostream>
@@ -35,8 +36,8 @@ void RefreshRender(Player* player)
 
 int main(int argc, char* argv[])
 {
-    const int window_width = 800;
-    const int window_height = 600;
+    int window_width = 800;
+    int window_height = 600;
     std::cout << "Starting application...\n";
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -80,7 +81,7 @@ int main(int argc, char* argv[])
     
 
     // Charger le sprite du joueur
-if (!player->loadSprite(renderer, "./assets/sprites/Hero.png")) {
+if (!player->loadSprite(renderer, "./assets/sprites/Hero.png", 16)) {
     std::cout << "Warning: Could not load player sprite\n";
 }
     Camera camera(window_width, window_height, player);
@@ -92,7 +93,7 @@ if (!player->loadSprite(renderer, "./assets/sprites/Hero.png")) {
         auto it = enemies.begin();
         while (it != enemies.end()) {
             Enemy* enemy = *it;
-            enemy->loadSprite(renderer);
+            enemy->loadSprite(renderer, 8);
             ++it;
         }      
     }
@@ -143,17 +144,19 @@ if (!player->loadSprite(renderer, "./assets/sprites/Hero.png")) {
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fond noir
         SDL_RenderClear(renderer);
+        SDL_GetWindowSize(window, &window_width, &window_height);
         // Dessiner le joueur
         Position player_world = player->getPosition();
         //std::cout << "Player world pos: (" << player_world.x << ", " << player_world.y << ")\n";
-        Position player_screen = camera.pos_to_screen(player_world);
+        Position player_screen = camera.pos_to_screen(player_world, window_height, window_width);
         //std::cout << "Player screen pos: (" << player_screen.x << ", " << player_screen.y << ")\n";
 
         player->render(renderer, player_screen);
-        for (auto & enemie : enemies) {
-            Position enemy_screen = camera.pos_to_screen(enemie->getPosition());
+        for (auto & enemie : enemies)
+        {
+            Position enemy_screen = camera.pos_to_screen(enemie->getPosition(), window_height, window_width);
             enemie->render(renderer, enemy_screen); 
-            }   
+        }
         
 
         text_box.render(renderer);

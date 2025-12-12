@@ -14,7 +14,7 @@ Player::~Player()
     }
 }
 
-bool Player::loadSprite(SDL_Renderer* renderer, const char* filepath, int target_size)
+bool Player::loadSprite(SDL_Renderer* renderer, const char* filepath, float target_size)
 {
     SDL_Surface* surface = IMG_Load(filepath);
     if (!surface) {
@@ -26,8 +26,10 @@ bool Player::loadSprite(SDL_Renderer* renderer, const char* filepath, int target
     std::cout << "Target size: " << target_size << "%\n";
     
     // Redimensionner à la taille cible
-    sprite_width = (int)(float(surface->w) * (target_size / 100.0f));
-    sprite_height = (int)(float(surface->h) * (target_size / 100.0f));
+    float og_width = surface->w;
+    float og_height = surface->h;
+    sprite_width = (int)(og_width * (target_size / 100.0f));
+    sprite_height = (int)(og_height * (target_size / 100.0f));
     
     std::cout << "Final sprite size: " << sprite_width << "x" << sprite_height << "\n";
     
