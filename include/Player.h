@@ -32,6 +32,13 @@ public:
     bool pickupItem(Item* item);
     bool useItem(int index);
 
+    void update(Uint64 delta_time);
+
+    void applySpeedBoost(int boost_value, Uint64 duration_ms);
+    void applyDamageBoost(int boost_value, Uint64 duration_ms);
+    int getEffectiveSpeed() const;
+    int getEffectiveDamage() const;
+
     // méthodes pour le rendu (signature du collègue conservée)
     bool loadSprite(SDL_Renderer* renderer, const char* filepath, float target_size = 64);
     void render(SDL_Renderer* renderer, Position screen_pos);
@@ -44,6 +51,12 @@ protected:
     int attackRange;
     int speed;
     Position position;
+
+    int speed_boost = 0;
+    Uint64 speed_boost_end = 0;
+    
+    int damage_boost = 0;
+    Uint64 damage_boost_end = 0;
     
     Inventory* inventory;
     

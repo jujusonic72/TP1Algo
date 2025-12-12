@@ -188,3 +188,44 @@ void Player::SetPosition(Position newPosition)
 {
     position = newPosition;
 }
+
+void Player::update(Uint64 delta_time)
+{
+    Uint64 current_time = SDL_GetTicks();
+    
+    // Vérifier si le speed boost est expiré
+    if (speed_boost != 0 && current_time >= speed_boost_end) {
+        speed_boost = 0;
+        std::cout << "Speed boost expired!\n";
+    }
+    
+    // Vérifier si le damage boost est expiré
+    if (damage_boost != 0 && current_time >= damage_boost_end) {
+        damage_boost = 0;
+        std::cout << "Damage boost expired!\n";
+    }
+}
+
+void Player::applySpeedBoost(int boost_value, Uint64 duration_ms)
+{
+    speed_boost = boost_value;
+    speed_boost_end = SDL_GetTicks() + duration_ms;
+    std::cout << "Speed boost applied: +" << boost_value << " for " << duration_ms/1000.0f << "s\n";
+}
+
+void Player::applyDamageBoost(int boost_value, Uint64 duration_ms)
+{
+    damage_boost = boost_value;
+    damage_boost_end = SDL_GetTicks() + duration_ms;
+    std::cout << "Damage boost applied: +" << boost_value << " for " << duration_ms/1000.0f << "s\n";
+}
+
+int Player::getEffectiveSpeed() const
+{
+    return speed + speed_boost;
+}
+
+int Player::getEffectiveDamage() const
+{
+    return damage + damage_boost;
+}

@@ -16,8 +16,9 @@ class TextBox
 {
 public:
     TextBox();
-    TextBox(QueueHandler* q);
+    TextBox(QueueHandler* q, int x, int y, int width, int height);
     ~TextBox();
+    TTF_Font* getFont() const { return font_; }
     void handle_event(const SDL_Event& e);
     void render(SDL_Renderer* renderer);
 private:
@@ -34,10 +35,14 @@ inline TextBox::TextBox() : font_size_(12), height_(30), width_(400), cursor_pos
 {
     if (!(font_ = TTF_OpenFont("./assets/fonts/Gugi/Gugi-Regular.ttf", 24))) throw std::runtime_error("Failed to load font");
 }
-inline TextBox::TextBox(QueueHandler* q) : queue_handler_(q), font_size_(12), height_(30), width_(400), cursor_pos_(0)
+inline TextBox::TextBox(QueueHandler* q, int x, int y, int width, int height) 
+    : queue_handler_(q), font_size_(24), height_(height), width_(width), cursor_pos_(0)
 {
+    box_pos_.x = x;
+    box_pos_.y = y;
     history_ = new NodeList<string>();
-    if (!(font_ = TTF_OpenFont("./assets/fonts/Gugi/Gugi-Regular.ttf", 24))) throw std::runtime_error("Failed to load font");
+    if (!(font_ = TTF_OpenFont("./assets/fonts/Gugi/Gugi-Regular.ttf", font_size_))) 
+        throw std::runtime_error("Failed to load font");
 }
 inline TextBox::~TextBox()
 {

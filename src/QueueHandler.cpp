@@ -6,6 +6,7 @@
 #include "Command.h"
 #include "../include/Commands/MoveCommand.h"
 #include "../include/Commands/CancelCommand.h"
+#include "../include/Commands/WaitCommand.h"
 
 void QueueHandler::enqueue(Command* command)
 {
@@ -92,6 +93,7 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             // Créer et retourner un AttackCommand
             //command = new MoveCommand();
             std::cout << "Attacking" << "\n";
+            player->applySpeedBoost(50, 5000);
             return command;
         }
         else if(cmd == "gather")
@@ -125,50 +127,38 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             std::cout << "Cancelling current command" << "\n";
             return command;
         }
-        //else if(cmd == ""){}
-        // switch (cmd)
-        // {
-        // case move:
-        //     {
-        //         Position pos;
-        //         if (cmdComponents.size() == 3)
-        //         {
-        //             pos = {std::stof(cmdComponents[1]), std::stof(cmdComponents[2])};
-        //         }
-        //         else
-        //         {
-        //             std::cerr << "Error: Invalid position for move command" << "\n";
-        //             return nullptr;
-        //         }
-        //         // Créer et retourner un MoveCommand
-        //         command = new MoveCommand(pos);
-        //         std::cout << "Moving to {" << pos.x << ", " << pos.y << "}";
-        //         std::cout << "\n";
-        //         return command;
-        //     }
-        // case attack:
-        //     // Créer et retourner un AttackCommand
-        //     //command = new MoveCommand();
-        //     std::cout << "Attacking" << "\n";
-        //     return command;
-        // case gather:
-        //     // Créer et retourner un GatherCommand
-        //     //command = new MoveCommand();
-        //     std::cout << "Gathering" << "\n";
-        //     return command;
-        // case use:
-        //     if (cmdComponents.size() != 2)
-        //     {
-        //         std::cerr << "Error: Invalid item for use command" << "\n";
-        //         return nullptr;
-        //     }
-        //     // Créer et retourner un UseCommand
-        //     //command = new MoveCommand();
-        //     std::cout << "Using: " << cmdComponents[1];
-        //     std::cout << "\n";
-        //     return command;
-        // }
-        // std::cerr << "Error: Invalid command passed" << "\n";
+        else if(cmd == "wait")
+        {
+            if(cmdComponents.size() == 2)
+            {
+              if(cmdComponents[1].find_first_not_of("0123456789") != std::string::npos)
+              {
+                  std::cerr << "Error: Invalid wait time" << "\n";
+                  return nullptr;
+              }
+              else {
+                  int durationMs = std::stoi(cmdComponents[1]);
+                  if(durationMs <= 0)
+                  {
+                      std::cerr << "Error: Wait time must be greater than 0" << "\n";
+                      return nullptr;
+                  }
+
+                  command = new WaitCommand(durationMs);
+                  std::cout << "Waiting for " << durationMs << " milliseconds" << "\n";
+                  return command;
+              }
+            }
+            else {
+              std::cerr << "Error: Invalid wait command / too many arguments" << "\n";
+              return nullptr;
+            }
+        }
+        else if(cmd == "quit" || cmd == "exit")
+        {
+            std::cout << "Exiting the game." << "\n";
+            exit(0);
+        }
         return nullptr;
     }
     catch (const std::invalid_argument& e)
@@ -178,4 +168,44 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
     }
     
     
+}
+
+void QueueHandler::renderQueue(SDL_Renderer* renderer, TTF_Font* font, int x, int y)
+{
+    if (isEmpty()) return;
+    
+    int line_height = 30;
+    int queue_size = size();
+    
+    // Calculer la position de départ (en haut) en fonction du nombre de commandes
+    int start_y = y - (queue_size * line_height);
+    
+    int current_y = start_y;
+    int index = 1;
+    
+    for (auto it = list.begin(); it != list.end(); ++it) {
+        Command* cmd = *it;
+        std::string display_text = std::to_string(index) + ". " + cmd->get_name();
+        
+        SDL_Color text_color = {200, 200, 200, 255};
+        SDL_Surface* surface = TTF_RenderText_Solid(font, display_text.c_str(), 
+                                                     display_text.size(), text_color);
+        
+        if (surface) {
+            SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+            SDL_FRect rect = {
+                static_cast<float>(x), 
+                static_cast<float>(current_y), 
+                static_cast<float>(surface->w), 
+                static_cast<float>(surface->h)
+            };
+            SDL_RenderTexture(renderer, texture, nullptr, &rect);
+            
+            SDL_DestroyTexture(texture);
+            SDL_DestroySurface(surface);
+        }
+        
+        current_y += line_height;  // On descend quand même, mais on a commencé plus haut
+        index++;
+    }
 }

@@ -19,11 +19,9 @@
 #include "Inventory.h"
 
 /*TODO:
-- Faire une classe Enemy ✓
 - Faire une classe Item ✓
 - Faire un inventaire pour le joueur ✓
 - Faire apparaître les ennemis dans le monde aléatoirement
-- Faire render les ennemis dans le monde un fois qu'il sont spawned ✓
 - Faire une classe UseCommand pour utiliser un item dans l'inventaire
 - Faire une classe AttackCommand avec un cooldown qui fait des dégâts aux ennemis dans la range et qui prompt les ennemis de faire des dégâts au joueur
 - Faire en sorte que les ennemis drop des item en mourant
@@ -118,8 +116,7 @@ int main(int argc, char* argv[])
     
     Camera camera(window_width, window_height, player);
     queueHandler.set_player(player);
-    TextBox text_box = TextBox(&queueHandler);
-    
+    TextBox text_box(&queueHandler, 10, window_height - 50, 400, 40);
     // Charger le sprite des ennemis
     if(!enemies.empty())
     {
@@ -143,7 +140,7 @@ int main(int argc, char* argv[])
         Uint64 current_time = SDL_GetTicks();
         Uint64 delta_time = current_time - last_time;
         last_time = current_time;
-        
+        player->update(delta_time);
         // Process SDL events
         while (SDL_PollEvent(&event))
         {
@@ -215,6 +212,7 @@ int main(int argc, char* argv[])
             enemie->render(renderer, enemy_screen); 
         }
         
+        queueHandler.renderQueue(renderer, text_box.getFont(), 10, window_height - 100);
         // NOUVEAU: Dessiner les items au sol
         for (auto & item : world_items) {
             if (item->isOnGround()) {
