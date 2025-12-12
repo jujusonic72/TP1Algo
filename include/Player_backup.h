@@ -1,6 +1,5 @@
 #pragma once
 #include "Position.h"
-#include "Inventory.h"
 #include <SDL3/SDL.h>
 
 class Player
@@ -11,9 +10,6 @@ public:
 
     int getHealth() const {return health;}
     void SetHealth(int newHealth);
-    
-    int getMaxHealth() const {return max_health;}
-    void SetMaxHealth(int newMaxHealth);
     
     int getDamage() const {return damage;}
     void SetDamage(int newDamage);
@@ -27,25 +23,16 @@ public:
     Position getPosition() const {return position;}
     void SetPosition(Position newPosition);
 
-    // Gestion de l'inventaire
-    Inventory* getInventory() { return inventory; }
-    bool pickupItem(Item* item);
-    bool useItem(int index);
-
-    // méthodes pour le rendu (signature du collègue conservée)
-    bool loadSprite(SDL_Renderer* renderer, const char* filepath, float target_size = 64);
+    // méthodes pour le rendu
+    bool loadSprite(SDL_Renderer* renderer, const char* filepath);
     void render(SDL_Renderer* renderer, Position screen_pos);
-    void renderUI(SDL_Renderer* renderer, int window_width, int window_height);
 
 protected:
     int health;
-    int max_health;
     int damage;
     int attackRange;
     int speed;
     Position position;
-    
-    Inventory* inventory;
     
     SDL_Texture* sprite_texture = nullptr;
     int sprite_width = 0;                 
