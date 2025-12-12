@@ -18,6 +18,7 @@ add_executable(TP1Algo
     src/Position.cpp
     src/TextBox.cpp
     src/Camera.cpp
+    src/Enemy.cpp
     src/Commands/MoveCommand.cpp
     src/Commands/CancelCommand.cpp
 )

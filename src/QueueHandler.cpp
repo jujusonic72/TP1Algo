@@ -1,6 +1,5 @@
 #include "QueueHandler.h"
 #include <sstream>
-#include <array>
 #include <iostream>
 #include <vector>
 
