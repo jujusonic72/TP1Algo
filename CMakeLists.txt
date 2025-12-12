@@ -20,6 +20,7 @@ add_executable(TP1Algo
     src/Camera.cpp
     src/Item.cpp
     src/Inventory.cpp
+    src/Enemy.cpp
     src/Commands/MoveCommand.cpp
     src/Commands/CancelCommand.cpp
 )
