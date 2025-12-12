@@ -93,6 +93,7 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             // Créer et retourner un AttackCommand
             //command = new MoveCommand();
             std::cout << "Attacking" << "\n";
+            player->applySpeedBoost(50, 5000);
             return command;
         }
         else if(cmd == "gather")
