@@ -8,9 +8,7 @@ enum class ItemType
     HEALTH_POTION,
     DAMAGE_BOOST,
     SPEED_BOOST,
-    TREASURE,
-    WEAPON,
-    KEY
+    
 };
 
 class Item

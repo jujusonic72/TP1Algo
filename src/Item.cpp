@@ -73,15 +73,7 @@ void Item::render(SDL_Renderer* renderer, Position screen_pos)
             case ItemType::SPEED_BOOST:
                 SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255); // Cyan
                 break;
-            case ItemType::TREASURE:
-                SDL_SetRenderDrawColor(renderer, 255, 215, 0, 255); // Or
-                break;
-            case ItemType::WEAPON:
-                SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255); // Gris
-                break;
-            case ItemType::KEY:
-                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Jaune
-                break;
+            
         }
         SDL_RenderFillRect(renderer, &rect);
     } else {
@@ -111,7 +103,3 @@ Item* Item::createSpeedBoost()
     return new Item(ItemType::SPEED_BOOST, "Speed Boost", "Increases movement speed by 20 for 30 seconds", 20);
 }
 
-Item* Item::createTreasure()
-{
-    return new Item(ItemType::TREASURE, "Treasure", "A valuable treasure", 100);
-}

@@ -106,10 +106,6 @@ int main(int argc, char* argv[])
     speed_boost->setOnGround(true);
     world_items.insertBack(speed_boost);
     
-    Item* treasure = Item::createTreasure();
-    treasure->setPosition({0, 250});
-    treasure->setOnGround(true);
-    world_items.insertBack(treasure);
     
     // Donner quelques items au joueur pour tester l'inventaire
     player->pickupItem(Item::createHealthPotion());
