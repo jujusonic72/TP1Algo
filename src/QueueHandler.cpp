@@ -5,6 +5,7 @@
 
 #include "Command.h"
 #include "../include/Commands/MoveCommand.h"
+#include "../include/Commands/CancelCommand.h"
 
 void QueueHandler::enqueue(Command* command)
 {
@@ -111,6 +112,17 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             //command = new MoveCommand();
             std::cout << "Using: " << cmdComponents[1];
             std::cout << "\n";
+            return command;
+        }
+        else if(cmd == "cancel")
+        {
+            if(size() == 0)
+            {
+                std::cerr << "Error: No command to cancel" << "\n";
+                return nullptr;
+            }
+            command = new CancelCommand();
+            std::cout << "Cancelling current command" << "\n";
             return command;
         }
         //else if(cmd == ""){}
