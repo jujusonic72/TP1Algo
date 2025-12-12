@@ -142,7 +142,12 @@ void QueueHandler::renderQueue(SDL_Renderer* renderer, TTF_Font* font, int x, in
     if (isEmpty()) return;
     
     int line_height = 30;
-    int current_y = y;
+    int queue_size = size();
+    
+    // Calculer la position de départ (en haut) en fonction du nombre de commandes
+    int start_y = y - (queue_size * line_height);
+    
+    int current_y = start_y;
     int index = 1;
     
     for (auto it = list.begin(); it != list.end(); ++it) {
@@ -167,7 +172,7 @@ void QueueHandler::renderQueue(SDL_Renderer* renderer, TTF_Font* font, int x, in
             SDL_DestroySurface(surface);
         }
         
-        current_y += line_height;
+        current_y += line_height;  // On descend quand même, mais on a commencé plus haut
         index++;
     }
 }
