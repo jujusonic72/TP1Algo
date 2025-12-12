@@ -86,7 +86,7 @@ if (!player->loadSprite(renderer, "./assets/sprites/Hero.png", 16)) {
 }
     Camera camera(window_width, window_height, player);
     queueHandler.set_player(player);
-    TextBox text_box = TextBox(&queueHandler);
+    TextBox text_box(&queueHandler, 10, window_height - 50, 400, 40);
     // Charger le sprite des ennemis
     if(!enemies.empty())
     {
@@ -158,7 +158,7 @@ if (!player->loadSprite(renderer, "./assets/sprites/Hero.png", 16)) {
             enemie->render(renderer, enemy_screen); 
         }
         
-
+        queueHandler.renderQueue(renderer, text_box.getFont(), 10, window_height - 100);
         text_box.render(renderer);
         
         SDL_RenderPresent(renderer);
