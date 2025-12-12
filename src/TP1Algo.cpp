@@ -12,6 +12,7 @@
 #include <SDL3_image/SDL_image.h>
 #include "NodeList.h"
 #include "Enemy.h"
+#include "Position.h"
 
 /*TODO:
 - Faire une classe Enemy
@@ -148,8 +149,11 @@ if (!player->loadSprite(renderer, "./assets/sprites/Hero.png")) {
         Position player_screen = camera.pos_to_screen(player_world);
         //std::cout << "Player screen pos: (" << player_screen.x << ", " << player_screen.y << ")\n";
 
-        player->loadSprite(renderer, "./assets/sprites/Player.png", 64);
-        for (auto & enemie : enemies) { enemie->loadSprite(renderer, 32); }   
+        player->render(renderer, player_screen);
+        for (auto & enemie : enemies) {
+            Position enemy_screen = camera.pos_to_screen(enemie->getPosition());
+            enemie->render(renderer, enemy_screen); 
+            }   
         
 
         text_box.render(renderer);

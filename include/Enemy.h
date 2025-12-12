@@ -27,7 +27,7 @@ public:
     void SetPosition(Position newPosition) {world_pos = newPosition;}
 
     // méthodes pour le rendu
-    bool loadSprite(SDL_Renderer* renderer, int target_size = 64)
+    bool loadSprite(SDL_Renderer* renderer, float target_size = 64)
     {
 
         SDL_Surface* surface = IMG_Load(sprite_path);
@@ -36,19 +36,24 @@ public:
             return false;
         }
 
+        std::cout << "Original size: " << surface->w << "x" << surface->h << "\n";
+        std::cout << "Target size: " << target_size << "%\n";
+        
         // Redimensionner à la taille cible
-        sprite_width = surface->w * (target_size/100);
-        sprite_height = surface->h * (target_size/100);
-
+        sprite_width = (int)(float(surface->w) * (target_size / 100.0f));
+        sprite_height = (int)(float(surface->h) * (target_size / 100.0f));
+        
+        std::cout << "Final sprite size: " << sprite_width << "x" << sprite_height << "\n";
+        
         sprite_texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_DestroySurface(surface);
-
+        
         if (!sprite_texture) {
             std::cout << "Failed to create texture: " << SDL_GetError() << "\n";
             return false;
         }
-
-        std::cout << "Sprite loaded successfully: " << sprite_path << "\n";
+    
+        //std::cout << "Sprite loaded successfully: " << sprite_path << "\n";
         return true;
     }
     void render(SDL_Renderer* renderer, Position screen_pos)
