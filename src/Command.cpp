@@ -11,11 +11,3 @@ Command::~Command() {
 void Command::post_execute()
 {
 }
-
-void Command::set_force_finish(bool b)
-{
-}
-
-void Command::set_finished(bool b)
-{
-}

@@ -6,6 +6,7 @@
 #include "Command.h"
 #include "../include/Commands/MoveCommand.h"
 #include "../include/Commands/CancelCommand.h"
+#include "../include/Commands/WaitCommand.h"
 
 void QueueHandler::enqueue(Command* command)
 {
@@ -125,7 +126,38 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             std::cout << "Cancelling current command" << "\n";
             return command;
         }
-        
+        else if(cmd == "wait")
+        {
+            if(cmdComponents.size() == 2)
+            {
+              if(cmdComponents[1].find_first_not_of("0123456789") != std::string::npos)
+              {
+                  std::cerr << "Error: Invalid wait time" << "\n";
+                  return nullptr;
+              }
+              else {
+                  int durationMs = std::stoi(cmdComponents[1]);
+                  if(durationMs <= 0)
+                  {
+                      std::cerr << "Error: Wait time must be greater than 0" << "\n";
+                      return nullptr;
+                  }
+
+                  command = new WaitCommand(durationMs);
+                  std::cout << "Waiting for " << durationMs << " milliseconds" << "\n";
+                  return command;
+              }
+            }
+            else {
+              std::cerr << "Error: Invalid wait command / too many arguments" << "\n";
+              return nullptr;
+            }
+        }
+        else if(cmd == "quit" || cmd == "exit")
+        {
+            std::cout << "Exiting the game." << "\n";
+            exit(0);
+        }
         return nullptr;
     }
     catch (const std::invalid_argument& e)

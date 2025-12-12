@@ -23,6 +23,7 @@ add_executable(TP1Algo
     src/Enemy.cpp
     src/Commands/MoveCommand.cpp
     src/Commands/CancelCommand.cpp
+    src/Commands/WaitCommand.cpp
 )
 
 # Indiquez où se trouvent vos headers
