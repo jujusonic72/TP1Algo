@@ -11,13 +11,15 @@ find_package(SDL3_ttf REQUIRED CONFIG)
 find_package(SDL3_image REQUIRED CONFIG)
 
 add_executable(TP1Algo 
-    src/TP1Algo.cpp
+    "src/TP1Algo.cpp"
     src/Command.cpp
     src/QueueHandler.cpp
-    src/Player.cpp
+    "src/Player.cpp"
     src/Position.cpp
     src/TextBox.cpp
     src/Camera.cpp
+    src/Item.cpp
+    src/Inventory.cpp
     src/Enemy.cpp
     src/Commands/MoveCommand.cpp
     src/Commands/CancelCommand.cpp
