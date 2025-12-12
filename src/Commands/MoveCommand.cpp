@@ -31,7 +31,7 @@ void MoveCommand::execute(Uint64 delta_time)
 void MoveCommand::update_position(Uint64 delta_time)
 {
     Position player_pos = player->getPosition();
-    int speed = player->getSpeed();
+    int speed = player->getEffectiveSpeed();
     float distance = sqrt(pow(targetPosition.x - player_pos.x, 2) + pow(targetPosition.y - player_pos.y, 2));
     if (distance == 0) {
         set_finished(true);

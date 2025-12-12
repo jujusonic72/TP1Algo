@@ -19,11 +19,9 @@
 #include "Inventory.h"
 
 /*TODO:
-- Faire une classe Enemy ✓
 - Faire une classe Item ✓
 - Faire un inventaire pour le joueur ✓
 - Faire apparaître les ennemis dans le monde aléatoirement
-- Faire render les ennemis dans le monde un fois qu'il sont spawned ✓
 - Faire une classe UseCommand pour utiliser un item dans l'inventaire
 - Faire une classe AttackCommand avec un cooldown qui fait des dégâts aux ennemis dans la range et qui prompt les ennemis de faire des dégâts au joueur
 - Faire en sorte que les ennemis drop des item en mourant
@@ -146,7 +144,7 @@ int main(int argc, char* argv[])
         Uint64 current_time = SDL_GetTicks();
         Uint64 delta_time = current_time - last_time;
         last_time = current_time;
-        
+        player->update(delta_time);
         // Process SDL events
         while (SDL_PollEvent(&event))
         {
