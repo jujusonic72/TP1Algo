@@ -1,0 +1,27 @@
+CompileFlags:
+  Add:
+    - -IF:/Documents/UQAT/algoJeux/TP/TP1Algo/external/SDL3/SDL3_ttf-3.2.2/include
+    - -IF:/Documents/UQAT/algoJeux/TP/TP1Algo/external/SDL3/SDL3-3.2.26/include
+    - -std=c++17
+    - -IF:/Documents/UQAT/algoJeux/TP/TP1Algo/include
+  Remove:
+    - -W*
+    - /W*
+
+Diagnostics:
+  ClangTidy:
+    Add: 
+      - modernize-*
+      - performance-*
+      - readability-*
+    Remove:
+      - modernize-use-trailing-return-type
+  UnusedIncludes: Strict
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes
+
+Hover:
+  ShowAKA: Yes

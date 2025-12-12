@@ -18,3 +18,4 @@ build/
 # Dossiers de cache IDE
 .vscode/
 .idea/
+.cache/

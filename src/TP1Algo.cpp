@@ -7,10 +7,23 @@
 #include "../include/QueueHandler.h"
 #include "../include/Command.h"
 #include <SDL3_ttf/SDL_ttf.h>
-
+#include "Camera.h"
 #include "../include/TextBox.h"
+#include <SDL3_image/SDL_image.h>
 
-std::atomic<bool> running = true;
+/*TODO:
+- Faire une classe Enemy
+- Faire une classe Item
+- Faire un inventaire pour le joueur
+- Faire apparaître les ennemis dans le monde aléatoirement
+- Faire render les ennemis dans le monde un fois qu'il sont spawned
+- Faire une classe UseCommand pour utiliser un item dans l'inventaire
+- Faire une classe AtackCommand avec un cooldown qui fait des dégats aux ennemis dans la range et qui prompt les ennemis de faire des dégats au joueur
+- Faire en sorte que les ennemis drop des item en mourant
+- Faire une classe GatherCommand qui pick up les items dans la range et les ajoute à l'inventaire du joueur
+- Faire un document de synthèse pour le tp
+*/
+std::atomic<bool> running(true);
 
 void RefreshRender(Player* player)
 {
@@ -19,6 +32,8 @@ void RefreshRender(Player* player)
 
 int main(int argc, char* argv[])
 {
+    const int window_width = 800;
+    const int window_height = 600;
     std::cout << "Starting application...\n";
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -29,7 +44,7 @@ int main(int argc, char* argv[])
 
     SDL_Window* window = SDL_CreateWindow(
         "Ma première fenêtre SDL3",
-        800, 600,
+        window_width, window_height,
         SDL_WINDOW_RESIZABLE
     );
 
@@ -51,6 +66,12 @@ int main(int argc, char* argv[])
     TTF_Init();
     QueueHandler queueHandler;
     Player* player = new Player();
+
+    // Charger le sprite du joueur
+if (!player->loadSprite(renderer, "./assets/sprites/Player.png")) {
+    std::cout << "Warning: Could not load player sprite\n";
+}
+    Camera camera(window_width, window_height, player);
     queueHandler.set_player(player);
     TextBox text_box = TextBox(&queueHandler);
     SDL_StartTextInput(window);
@@ -87,13 +108,20 @@ int main(int argc, char* argv[])
         }
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fond noir
         SDL_RenderClear(renderer);
+        // Dessiner le joueur
+        Position player_world = player->getPosition();
+        std::cout << "Player world pos: (" << player_world.x << ", " << player_world.y << ")\n";
+        Position player_screen = camera.pos_to_screen(player_world);
+        std::cout << "Player screen pos: (" << player_screen.x << ", " << player_screen.y << ")\n";
 
+        player->render(renderer, player_screen);
         text_box.render(renderer);
         
         SDL_RenderPresent(renderer);
+
         SDL_Delay(16);  // Attend 1/60 de seconde
     }
-    
+    delete player;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

@@ -1,5 +1,6 @@
 #pragma once
 #include "Position.h"
+#include <SDL3/SDL.h>
 
 class Player
 {
@@ -7,7 +8,6 @@ public:
     Player();
     ~Player();
 
-    // Getters and Setters
     int getHealth() const {return health;}
     void SetHealth(int newHealth);
     
@@ -23,13 +23,18 @@ public:
     Position getPosition() const {return position;}
     void SetPosition(Position newPosition);
 
+    // méthodes pour le rendu
+    bool loadSprite(SDL_Renderer* renderer, const char* filepath);
+    void render(SDL_Renderer* renderer, Position screen_pos);
 
-    // Inventory
-    
 protected:
     int health;
     int damage;
     int attackRange;
     int speed;
     Position position;
+    
+    SDL_Texture* sprite_texture = nullptr;
+    int sprite_width = 0;                 
+    int sprite_height = 0;                
 };
