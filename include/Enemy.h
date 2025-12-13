@@ -7,6 +7,7 @@ class Player;
 #include <SDL3_image/SDL_image.h>
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 
 class Enemy
 {

@@ -157,13 +157,13 @@ void Inventory::render(SDL_Renderer* renderer, int x, int y, int width, int heig
         // Couleur selon le type
         switch (item->getType()) {
             case ItemType::HEALTH_POTION:
-                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //green
                 break;
             case ItemType::DAMAGE_BOOST:
-                SDL_SetRenderDrawColor(renderer, 255, 165, 0, 255);
+                SDL_SetRenderDrawColor(renderer, 255, 165, 0, 255); // Orange
                 break;
             case ItemType::SPEED_BOOST:
-                SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+                SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255); // Cyan
                 break;
            
         }
