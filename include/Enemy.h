@@ -5,6 +5,7 @@ class Player;
 #include "Position.h"
 #include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
+#include <algorithm>
 #include <iostream>
 
 class Enemy
@@ -24,6 +25,17 @@ public:
     void SetSpeed(int newSpeed) { spd = newSpeed; }  // FIXÉ: était hp = newSpeed
     Position getPosition() const { return world_pos; }
     void SetPosition(Position newPosition) { world_pos = newPosition; }
+
+    bool takeDamage(int damage)
+    {
+        hp -= damage;
+        hp = std::max(hp, 0);
+        if(hp == 0)
+        {
+            return true;
+        }
+        return false;
+    }
 
     bool loadSprite(SDL_Renderer* renderer, float target_size = 64)
     {

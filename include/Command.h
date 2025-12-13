@@ -12,6 +12,7 @@ public:
     virtual void pre_execute(QueueHandler* queueHandler) = 0;
     virtual void execute(Uint64 delta_time) = 0;
     string get_name() {return name;}
+    void set_name(string new_name) {name = new_name;}
     virtual void post_execute();
     bool is_edit_command() const { return is_edit_command_; }
     

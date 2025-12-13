@@ -1,4 +1,5 @@
 #include "QueueHandler.h"
+#include <cmath>
 #include <sstream>
 #include <iostream>
 #include <vector>
@@ -7,6 +8,7 @@
 #include "../include/Commands/MoveCommand.h"
 #include "../include/Commands/CancelCommand.h"
 #include "../include/Commands/WaitCommand.h"
+#include "../include/Commands/AttackCommand.h"
 
 void QueueHandler::enqueue(Command* command)
 {
@@ -86,14 +88,26 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
                 command = new MoveCommand(pos);
                 std::cout << "Moving to {" << pos.x << ", " << pos.y << "}";
                 std::cout << "\n";
+
+                command->set_name(cmdComponents[0] + " " + cmdComponents[1] + " " + cmdComponents[2]);
+
                 return command;
         }
         else if(cmd == "attack")
         {
             // Créer et retourner un AttackCommand
-            //command = new MoveCommand();
+
+            if(cmdComponents.size() != 1)
+            {
+                std::cerr << "Error: Attack command takes no arguments" << "\n";
+                return nullptr;
+            }
+
+            command = new AttackCommand();
             std::cout << "Attacking" << "\n";
-            player->applySpeedBoost(50, 5000);
+
+            command->set_name(cmdComponents[0]);
+
             return command;
         }
         else if(cmd == "gather")
@@ -101,6 +115,9 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             // Créer et retourner un GatherCommand
             //command = new MoveCommand();
             std::cout << "Gathering" << "\n";
+
+            // command->set_name(cmdComponents[0]);
+            
             return command;
         }
         else if(cmd == "use")
@@ -114,6 +131,9 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             //command = new MoveCommand();
             std::cout << "Using: " << cmdComponents[1];
             std::cout << "\n";
+
+            command->set_name(cmdComponents[0]);
+
             return command;
         }
         else if(cmd == "cancel")
@@ -123,6 +143,13 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
                 std::cerr << "Error: No command to cancel" << "\n";
                 return nullptr;
             }
+
+            if(cmdComponents.size() != 1)
+            {
+                std::cerr << "Error: Cancel command takes no arguments" << "\n";
+                return nullptr;
+            }
+
             command = new CancelCommand();
             std::cout << "Cancelling current command" << "\n";
             return command;
@@ -146,6 +173,9 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
 
                   command = new WaitCommand(durationMs);
                   std::cout << "Waiting for " << durationMs << " milliseconds" << "\n";
+
+                  command->set_name(cmdComponents[0] + " " + cmdComponents[1] + "ms");
+
                   return command;
               }
             }
@@ -173,39 +203,44 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
 void QueueHandler::renderQueue(SDL_Renderer* renderer, TTF_Font* font, int x, int y)
 {
     if (isEmpty()) return;
-    
+
     int line_height = 30;
     int queue_size = size();
-    
-    // Calculer la position de départ (en haut) en fonction du nombre de commandes
-    int start_y = y - (queue_size * line_height);
-    
+
+    // Limit rendering to at most 7 items
+    int displayed = std::min(queue_size, 7);
+    int start_y = y - (displayed * line_height);
     int current_y = start_y;
     int index = 1;
-    
+
     for (auto it = list.begin(); it != list.end(); ++it) {
+        if (index > displayed) break;
+
         Command* cmd = *it;
-        std::string display_text = std::to_string(index) + ". " + cmd->get_name();
-        
+
+        std::string display_text = (index == 1)
+            ? "(Current) " + cmd->get_name()
+            : std::to_string(index) + ". " + cmd->get_name();
+
         SDL_Color text_color = {200, 200, 200, 255};
-        SDL_Surface* surface = TTF_RenderText_Solid(font, display_text.c_str(), 
-                                                     display_text.size(), text_color);
-        
+        SDL_Surface* surface = TTF_RenderText_Solid(font, display_text.c_str(),
+                                                    display_text.size(), text_color);
+
         if (surface) {
             SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_FRect rect = {
-                static_cast<float>(x), 
-                static_cast<float>(current_y), 
-                static_cast<float>(surface->w), 
+                static_cast<float>(x),
+                static_cast<float>(current_y),
+                static_cast<float>(surface->w),
                 static_cast<float>(surface->h)
             };
             SDL_RenderTexture(renderer, texture, nullptr, &rect);
-            
+
             SDL_DestroyTexture(texture);
             SDL_DestroySurface(surface);
         }
-        
-        current_y += line_height;  // On descend quand même, mais on a commencé plus haut
+
+        current_y += line_height;
         index++;
     }
 }

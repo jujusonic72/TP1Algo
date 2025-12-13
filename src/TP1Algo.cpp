@@ -7,6 +7,7 @@
 
 #include <SDL3_ttf/SDL_ttf.h>
 #include "Camera.h"
+#include "Pnj.h"
 #include "TextBox.h"
 #include <SDL3_image/SDL_image.h>
 #include "Player.h"
@@ -72,13 +73,11 @@ int main(int argc, char* argv[])
     QueueHandler queueHandler;
     Player* player = new Player();
     
-    //Liste des ennemies
-    NodeList<Enemy*> enemies;
 
     // Spawn quelques ennemis
-    enemies.insertBack(new Enemy(50, 10, 2000, 100, {200, 200}));
-    enemies.insertBack(new Enemy(50, 10, 2000, 100, {-200, -200}));
-    enemies.insertBack(new Enemy(50, 10, 2000, 100, {300, 150}));
+    queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {200, 200}));
+    queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {-200, -200}));
+    queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {300, 150}));
     
     // NOUVEAU: Liste des items dans le monde
     NodeList<Item*> world_items;
@@ -118,16 +117,19 @@ int main(int argc, char* argv[])
     queueHandler.set_player(player);
     TextBox text_box(&queueHandler, 10, window_height - 50, 400, 40);
     // Charger le sprite des ennemis
-    if(!enemies.empty())
+    if(!queueHandler.get_enemies().empty())
     {
-        auto it = enemies.begin();
-        while (it != enemies.end()) {
+        auto& enemies_list = queueHandler.get_enemies();
+        auto it = enemies_list.begin();
+        while (it != enemies_list.end()) {
             Enemy* enemy = *it;
             enemy->loadSprite(renderer, 8);
             ++it;
-        }      
+        }
     }
     
+    Pnj* pnj = new Pnj({150, 150});
+    pnj->loadSprite(renderer, "./assets/sprites/Pnj.png", 8);
     SDL_StartTextInput(window);
     
     std::cout << "Entering main loop. Type 'quit' or 'exit' to close, or close the window.\n";
@@ -152,22 +154,17 @@ int main(int argc, char* argv[])
             {
                 text_box.handle_event(event);
             }
+            // if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_E) {
+            // if (pnj->isPlayerInRange(player->getPosition())) {
+            // pnj->interact();  // Passe au dialogue suivant
+            // }
+            //}
         }
 
         if (!queueHandler.isEmpty())
         {
             // Execute the current command
             queueHandler.front()->execute(delta_time);
-        }
-
-        if(!enemies.empty())
-        {
-            auto it = enemies.begin();
-            while (it != enemies.end()) {
-                Enemy* enemy = *it;
-                enemy->update(delta_time, player);
-                ++it;
-            }
         }
         
         //Logique de ramassage automatique des items proches
@@ -204,12 +201,19 @@ int main(int argc, char* argv[])
         Position player_screen = camera.pos_to_screen(player_world, window_height, window_width);
 
         player->render(renderer, player_screen);
-        
+
+        Position pnj_screen = camera.pos_to_screen(pnj->getPosition(), window_height, window_width);
+        pnj->render(renderer, pnj_screen);
+        if (pnj->isPlayerInRange(player->getPosition())) {
+        pnj->renderDialogue(renderer, text_box.getFont(), window_width, window_height);
+        }   
+
         // Dessiner les ennemis
-        for (auto & enemie : enemies)
-        {
+        auto& enemies_list = queueHandler.get_enemies(); // reuse non-const ref
+        for (auto it = enemies_list.begin(); it != enemies_list.end(); ++it) {
+            Enemy* enemie = *it;
             Position enemy_screen = camera.pos_to_screen(enemie->getPosition(), window_height, window_width);
-            enemie->render(renderer, enemy_screen); 
+            enemie->render(renderer, enemy_screen);
         }
         
         queueHandler.renderQueue(renderer, text_box.getFont(), 10, window_height - 100);
@@ -232,21 +236,22 @@ int main(int argc, char* argv[])
     }
 
     // CLEANUP
-    while (!enemies.empty()) 
+    while (!queueHandler.get_enemies().empty()) 
     {
-        Enemy* enemy = *enemies.begin();
+        auto& enemies_list_cleanup = queueHandler.get_enemies();
+        Enemy* enemy = *enemies_list_cleanup.begin();
         delete enemy;
-        enemies.eraseFront();
+        enemies_list_cleanup.eraseFront();
     }
     
-    // NOUVEAU: Cleanup des items
+    // Cleanup des items
     while (!world_items.empty()) 
     {
         Item* item = *world_items.begin();
         delete item;
         world_items.eraseFront();
     }
-    
+    delete pnj;
     delete player;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

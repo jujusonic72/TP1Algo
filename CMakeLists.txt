@@ -21,6 +21,11 @@ add_executable(TP1Algo
     src/Item.cpp
     src/Inventory.cpp
     src/Enemy.cpp
+    src/Pnj.cpp
+    src/Commands/MoveCommand.cpp
+    src/Commands/CancelCommand.cpp
+    src/Commands/WaitCommand.cpp
+    src/Commands/AttackCommand.cpp
         src/Commands/MoveCommand.cpp
     src/Commands/CancelCommand.cpp
     src/Commands/WaitCommand.cpp
