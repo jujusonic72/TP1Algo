@@ -35,6 +35,27 @@ void RefreshRender(Player* player)
 {
     
 }
+void renderDebugText(SDL_Renderer* renderer, TTF_Font* font, Position screen_pos, const std::string& text)
+{
+    SDL_Color text_color = {255, 255, 0, 255};  // Jaune
+    SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), text.size(), text_color);
+    
+    if (surface) {
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+        
+        SDL_FRect rect = {
+            static_cast<float>(screen_pos.x - surface->w / 2),
+            static_cast<float>(screen_pos.y + 30),  // 30 pixels sous l'entité
+            static_cast<float>(surface->w),
+            static_cast<float>(surface->h)
+        };
+        
+        SDL_RenderTexture(renderer, texture, nullptr, &rect);
+        
+        SDL_DestroyTexture(texture);
+        SDL_DestroySurface(surface);
+    }
+}
 
 int main(int argc, char* argv[])
 {
@@ -115,7 +136,7 @@ int main(int argc, char* argv[])
     player->pickupItem(Item::createDamageBoost());
 
     // Charger le sprite du joueur
-    if (!player->loadSprite(renderer, "./assets/sprites/Hero.png", 16)) {
+    if (!player->loadSprite(renderer, "./assets/sprites/Hero.png", 8)) {
         std::cout << "Warning: Could not load player sprite\n";
     }
     
@@ -128,13 +149,13 @@ int main(int argc, char* argv[])
         auto it = enemies.begin();
         while (it != enemies.end()) {
             Enemy* enemy = *it;
-            enemy->loadSprite(renderer, 8);
+            enemy->loadSprite(renderer, 5);
             ++it;
         }      
     }
     
     Pnj* pnj = new Pnj({150, 150});
-    pnj->loadSprite(renderer, "./assets/sprites/Pnj.png", 8);
+    pnj->loadSprite(renderer, "./assets/sprites/Pnj.png", 7);
     SDL_StartTextInput(window);
     
     std::cout << "Entering main loop. Type 'quit' or 'exit' to close, or close the window.\n";
@@ -207,27 +228,36 @@ int main(int argc, char* argv[])
         }
 
         // RENDERING
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Fond noir
+        SDL_SetRenderDrawColor(renderer, 0, 123, 0, 255); // Fond noir
         SDL_RenderClear(renderer);
         SDL_GetWindowSize(window, &window_width, &window_height);
         
         // Dessiner le joueur
         Position player_world = player->getPosition();
         Position player_screen = camera.pos_to_screen(player_world, window_height, window_width);
-
         player->render(renderer, player_screen);
+        std::string player_pos_text = "(" + std::to_string(int(player_world.x)) + ", " + std::to_string(int(player_world.y)) + ")";
+        renderDebugText(renderer, text_box.getFont(), {player_screen.x, player_screen.y + 30}, player_pos_text);
 
         Position pnj_screen = camera.pos_to_screen(pnj->getPosition(), window_height, window_width);
         pnj->render(renderer, pnj_screen);
         if (pnj->isPlayerInRange(player->getPosition())) {
         pnj->renderDialogue(renderer, text_box.getFont(), window_width, window_height);
         }   
+        std::string pnj_pos_text = "(" + std::to_string(int(pnj->getPosition().x)) + ", " + std::to_string(int(pnj->getPosition().y)) + ")";
+        renderDebugText(renderer, text_box.getFont(), {pnj_screen.x, pnj_screen.y + 20}, pnj_pos_text);
 
         // Dessiner les ennemis
         for (auto & enemie : enemies)
         {
-            Position enemy_screen = camera.pos_to_screen(enemie->getPosition(), window_height, window_width);
-            enemie->render(renderer, enemy_screen); 
+            Position enemy_world = enemie->getPosition();
+            Position enemy_screen = camera.pos_to_screen(enemy_world, window_height, window_width);
+
+            enemie->render(renderer, enemy_screen);
+
+            // Debug text pour l'ennemi
+            std::string enemy_pos_text = "(" + std::to_string(int(enemy_world.x)) + ", " + std::to_string(int(enemy_world.y)) + ")";
+            renderDebugText(renderer, text_box.getFont(), enemy_screen, enemy_pos_text); 
         }
         
         queueHandler.renderQueue(renderer, text_box.getFont(), 10, window_height - 100);
