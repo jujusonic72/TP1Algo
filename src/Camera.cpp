@@ -6,7 +6,4 @@ Camera::Camera(int window_width, int window_height, Player* player)
     
 }
 
-Camera::~Camera()
-{
-    // Rien à nettoyer pour l'instant
-}
+Camera::~Camera() {}

@@ -1,6 +1,5 @@
 #pragma once
 #include <SDL3/SDL_stdinc.h>
-#include <string.h>
 #include <string>
 #include "QueueHandler.h"
 using namespace std;

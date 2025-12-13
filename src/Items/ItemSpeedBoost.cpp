@@ -6,7 +6,7 @@
 void ItemSpeedBoost::UseItem(Player* player)
 {
 
-    // Logique pour augmenter les dégâts du joueur
+    // Logique pour augmenter la vitesse du joueur
     if (!player) {
         return;
     }

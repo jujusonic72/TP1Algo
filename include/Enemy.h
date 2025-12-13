@@ -23,7 +23,7 @@ public:
     int getAttackRange() const { return rng; }
     void SetAttackRange(int newAttackRange) { rng = newAttackRange; }
     int getSpeed() const { return spd; }
-    void SetSpeed(int newSpeed) { spd = newSpeed; }  // FIXÉ: était hp = newSpeed
+    void SetSpeed(int newSpeed) { spd = newSpeed; }
     Position getPosition() const { return world_pos; }
     void SetPosition(Position newPosition) { world_pos = newPosition; }
 
@@ -90,10 +90,8 @@ protected:
     int sprite_height = 0;
 };
 
-// Include Player.h APRÈS la définition de Enemy
 #include "Player.h"
 
-// Implémentation inline de update
 inline void Enemy::update(Uint64 delta_time, Player* player)
 {
     Position player_pos = player->getPosition();

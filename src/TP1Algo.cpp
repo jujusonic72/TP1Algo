@@ -1,6 +1,5 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
-#include <thread>
 #include <atomic>
 #include <iostream>
 
@@ -20,18 +19,6 @@
 #include "Items/ItemHealthPotion.h"
 #include "Items/ItemDamageBoost.h"
 #include "Items/ItemSpeedBoost.h"
-#include "Inventory.h"
-
-/*TODO:
-- Faire une classe Item ✓
-- Faire un inventaire pour le joueur ✓
-- Faire apparaître les ennemis dans le monde aléatoirement
-- Faire une classe UseCommand pour utiliser un item dans l'inventaire
-- Faire une classe AttackCommand avec un cooldown qui fait des dégâts aux ennemis dans la range et qui prompt les ennemis de faire des dégâts au joueur
-- Faire en sorte que les ennemis drop des item en mourant
-- Faire une classe GatherCommand qui pick up les items dans la range et les ajoute à l'inventaire du joueur
-- Faire un document de synthèse pour le tp
-*/
 std::atomic<bool> running(true);
 
 void RefreshRender(Player* player)
@@ -103,10 +90,8 @@ int main(int argc, char* argv[])
     queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {-200, -200}));
     queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {300, 150}));
     
-    // NOUVEAU: Liste des items dans le monde
     NodeList<Item*> world_items;
     
-    // Spawner des items de test
     Item* potion1 = new ItemHealthPotion("Health Potion", "Restores 50 HP", 50);
     potion1->setPosition({100, 100});
     potion1->setOnGround(true);
@@ -128,7 +113,6 @@ int main(int argc, char* argv[])
     world_items.insertBack(speed_boost);
     
     
-    // Donner quelques items au joueur pour tester l'inventaire
     player->pickupItem(new ItemHealthPotion("Health Potion", "Restores 50 HP", 50));
     player->pickupItem(new ItemSpeedBoost("Speed Boost", "Increases speed by 20 for 30 seconds", 20, 30000));
 
@@ -178,11 +162,6 @@ int main(int argc, char* argv[])
             {
                 text_box.handle_event(event);
             }
-            // if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_E) {
-            // if (pnj->isPlayerInRange(player->getPosition())) {
-            // pnj->interact();  // Passe au dialogue suivant
-            // }
-            //}
         }
 
         if (!queueHandler.isEmpty())
@@ -229,18 +208,16 @@ int main(int argc, char* argv[])
         renderDebugText(renderer, text_box.getFont(), {pnj_screen.x, pnj_screen.y + 20}, pnj_pos_text);
 
         // Dessiner les ennemis
-        auto& enemies_list = queueHandler.get_enemies(); // reuse non-const ref
+        auto& enemies_list = queueHandler.get_enemies();
         for (auto it = enemies_list.begin(); it != enemies_list.end(); ++it) {
             Enemy* enemie = *it;
             Position enemy_screen = camera.pos_to_screen(enemie->getPosition(), window_height, window_width);
             enemie->render(renderer, enemy_screen);
-            // Debug text pour l'ennemi
             std::string enemy_pos_text = "(" + std::to_string(int(enemie->getPosition().x)) + ", " + std::to_string(int(enemie->getPosition().y)) + ")";
             renderDebugText(renderer, text_box.getFont(), enemy_screen, enemy_pos_text); 
         }
         
         queueHandler.renderQueue(renderer, text_box.getFont(), 10, window_height - 100);
-        // NOUVEAU: Dessiner les items au sol
         for (auto & item : world_items) {
             if (item->isOnGround()) {
                 Position item_screen = camera.pos_to_screen(item->getPosition(), window_height, window_width);
@@ -258,7 +235,6 @@ int main(int argc, char* argv[])
         text_box.set_box_pos({10, float(window_height - 50)});
         text_box.render(renderer);
         
-        // NOUVEAU: Afficher l'UI du joueur (barre de vie + inventaire)
         player->renderUI(renderer, window_width, window_height);
         
         SDL_RenderPresent(renderer);

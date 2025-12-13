@@ -105,10 +105,6 @@ void Inventory::render(SDL_Renderer* renderer, int x, int y, int width, int heig
     SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
     SDL_RenderRect(renderer, &bg_rect);
 
-    // Afficher le titre "INVENTORY"
-    // (Pour l'instant sans texte, on ajoutera TTF plus tard si nécessaire)
-
-    // Calculer la disposition des items (grille 4x5)
     int cols = 4;
     int item_size = 40;
     int padding = 10;
@@ -146,7 +142,7 @@ void Inventory::render(SDL_Renderer* renderer, int x, int y, int width, int heig
         int slot_x = start_x + col * (item_size + padding) + item_size / 2;
         int slot_y = start_y + row * (item_size + padding) + item_size / 2;
 
-        // Dessiner l'item (version simplifiée sans sprite)
+        // Dessiner l'item
         SDL_FRect item_rect = {
             static_cast<float>(slot_x - 20),
             static_cast<float>(slot_y - 20),

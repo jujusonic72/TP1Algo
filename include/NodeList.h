@@ -1,8 +1,6 @@
 #ifndef NodeList_hpp
 #define NodeList_hpp
 
-#include <stdio.h>
-
 template <typename T>
 class NodeList
 {

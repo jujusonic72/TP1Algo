@@ -12,7 +12,4 @@ void CancelCommand::pre_execute(QueueHandler* queueHandler)
     }
 }
 
-void CancelCommand::execute(Uint64 delta_time)
-{
-    // Nothing to do here since the command is already handled in pre_execute
-}
+void CancelCommand::execute(Uint64 delta_time) {}

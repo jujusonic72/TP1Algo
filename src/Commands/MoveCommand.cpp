@@ -18,7 +18,6 @@ void MoveCommand::execute(Uint64 delta_time)
         return;
     }
     
-    // Implement movement logic here
     // Logique de mouvement
     update_position(delta_time);
 

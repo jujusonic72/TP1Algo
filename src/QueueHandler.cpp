@@ -1,5 +1,4 @@
 #include "QueueHandler.h"
-#include <cmath>
 #include <sstream>
 #include <iostream>
 
@@ -56,12 +55,12 @@ int QueueHandler::size()
 
 Command* QueueHandler::parse_and_validate(const std::string& input)
 {
-    NodeList<std::string> cmdComponents;  // NodeList au lieu de vector
+    NodeList<std::string> cmdComponents;
     std::stringstream ss(input);
     std::string substr;
     while (ss >> substr)
     {
-        cmdComponents.insertBack(substr);  // insertBack au lieu de push_back
+        cmdComponents.insertBack(substr);
     }
     
     if (cmdComponents.empty())

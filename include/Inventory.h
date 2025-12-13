@@ -27,7 +27,7 @@ public:
     NodeList<Item*>::Iterator begin() { return items_.begin(); }
     NodeList<Item*>::Iterator end() { return items_.end(); }
 
-    // Rendu (affichage visuel de l'inventaire)
+    // Rendu
     void render(SDL_Renderer* renderer, int x, int y, int width, int height);
 
 private:

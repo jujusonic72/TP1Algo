@@ -5,7 +5,7 @@
 void ItemHealthPotion::UseItem(Player* player)
 {
 
-    // Logique pour augmenter les dégâts du joueur
+    // Logique pour augmenter la vie du joueur
     if (!player) {
         return;
     }

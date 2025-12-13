@@ -39,7 +39,7 @@ public:
     int getEffectiveSpeed() const;
     int getEffectiveDamage() const;
 
-    // méthodes pour le rendu (signature du collègue conservée)
+    // méthodes pour le rendu
     bool loadSprite(SDL_Renderer* renderer, const char* filepath, float target_size = 64);
     void render(SDL_Renderer* renderer, Position screen_pos);
     void renderUI(SDL_Renderer* renderer, int window_width, int window_height);

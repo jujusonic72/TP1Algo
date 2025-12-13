@@ -12,12 +12,9 @@ public:
 
     };
 
-
     void UseItem(Player* player) override;
-
 
 private:
     Uint64 duration_ms; // Durée de l'effet en millisecondes
-
 };
 

@@ -6,7 +6,7 @@
 #include "Enemy.h"
 #include "Pnj.h"
 
-class Command;  // ← Déclaration anticipée
+class Command;
 
 class QueueHandler
 {
@@ -51,7 +51,6 @@ public:
 
     void renderQueue(SDL_Renderer* renderer, TTF_Font* font, int x, int y);
     
-    // Pour pouvoir itérer (nécessaire pour renderQueue)
     CommandList::Iterator begin() { return list.begin(); }
     CommandList::Iterator end() { return list.end(); }
 protected:

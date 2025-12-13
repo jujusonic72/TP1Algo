@@ -14,14 +14,7 @@ public:
     Camera(int window_width, int window_height, Player* player);
     ~Camera(); // Destructeur
     Player* player_ref;
-    
 
-    
-    
-    
-    
-    
-    
     Position player_pos() {return player_ref->getPosition();}
     void get_center_screen(int height, int width) 
     {

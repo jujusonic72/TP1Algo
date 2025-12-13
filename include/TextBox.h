@@ -53,14 +53,11 @@ inline void TextBox::handle_event(const SDL_Event& e)
 {
     if (e.type == SDL_EVENT_TEXT_INPUT)
     {
-        // TODO: Ajouter le caractère à text_
         text_.insert(cursor_pos_, e.text.text);
         ++cursor_pos_;
     }
     else if (e.type == SDL_EVENT_KEY_DOWN)
     {
-        // TODO: Gérer les touches spéciales
-        // Backspace, Enter, Flèches...
         switch (e.key.key)
         {
             case SDLK_BACKSPACE:

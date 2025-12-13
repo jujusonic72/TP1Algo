@@ -5,7 +5,7 @@
 Player::Player()
     : health(100), max_health(100), damage(10), attackRange(100), speed(50), position{0, 0}
 {
-    inventory = new Inventory(4); // Inventaire de 20 slots
+    inventory = new Inventory(4);
 }
 
 Player::~Player()
@@ -105,7 +105,7 @@ void Player::renderUI(SDL_Renderer* renderer, int window_width, int window_heigh
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderRect(renderer, &bg_rect);
     
-    // Afficher l'inventaire (dans le coin inférieur droit)
+    // Afficher l'inventaire
     int inv_width = 220;
     int inv_height = 80;
     int inv_x = window_width - inv_width - 10;

@@ -1,13 +1,7 @@
 #include "Command.h"
 
-Command::Command() {
-    // Implémentation (peut être vide si pas de logique spéciale)
-}
+Command::Command() {}
 
-Command::~Command() {
-    // Implémentation (peut être vide si pas de nettoyage spécial)
-}
+Command::~Command() {}
 
-void Command::post_execute()
-{
-}
+void Command::post_execute() {}
