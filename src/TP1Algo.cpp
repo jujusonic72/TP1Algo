@@ -242,7 +242,7 @@ int main(int argc, char* argv[])
             Position enemy_screen = camera.pos_to_screen(enemie->getPosition(), window_height, window_width);
             enemie->render(renderer, enemy_screen);
             // Debug text pour l'ennemi
-            std::string enemy_pos_text = "(" + std::to_string(int(enemy_world.x)) + ", " + std::to_string(int(enemy_world.y)) + ")";
+            std::string enemy_pos_text = "(" + std::to_string(int(enemie->getPosition().x)) + ", " + std::to_string(int(enemie->getPosition().y)) + ")";
             renderDebugText(renderer, text_box.getFont(), enemy_screen, enemy_pos_text); 
         }
         
