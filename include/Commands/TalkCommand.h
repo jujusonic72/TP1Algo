@@ -2,14 +2,12 @@
 #include "../QueueHandler.h"
 #include "../Command.h"
 
-class CancelCommand : public Command
+class TalkCommand : public Command
 {
 public:
-    CancelCommand();
-    CancelCommand(int position = 0) {position_to_cancel = position;};
     void pre_execute(QueueHandler* queueHandler) override;
     void execute(Uint64 delta_time) override;
-
-    private:
-    int position_to_cancel = 0;
+    void post_execute() override;
+protected:
+    Player* player = nullptr;
 };

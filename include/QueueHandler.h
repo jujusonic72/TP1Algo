@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "NodeList.h"
 #include "Enemy.h"
+#include "Pnj.h"
 
 class Command;  // ← Déclaration anticipée
 
@@ -27,6 +28,9 @@ public:
     Player* get_player() const { return player; }
     void set_player(Player* p) { player = p; }
     void fillCmdMap();
+
+    void set_pnj(Pnj* p) { pnj = p; }
+    Pnj* get_pnj() const { return pnj; }
 
     void add_enemy(Enemy* enemy) { enemies.insertBack(enemy); }
     void kill_enemy(Enemy* enemy)
@@ -57,6 +61,7 @@ public:
 protected:
     Player* player = nullptr;
     NodeList<Enemy*> enemies;
+    Pnj* pnj = nullptr;
 };
 
 

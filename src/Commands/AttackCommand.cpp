@@ -76,7 +76,4 @@ void AttackCommand::trigger_attack()
     }
     else
         std::cout << "No enemy in range to attack.\n";
-
-
-    
 }

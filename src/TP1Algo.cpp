@@ -152,8 +152,8 @@ int main(int argc, char* argv[])
         }
     }
     
-    Pnj* pnj = new Pnj({150, 150});
-    pnj->loadSprite(renderer, "./assets/sprites/Pnj.png", 7);
+    queueHandler.set_pnj(new Pnj({0, 200}));
+    queueHandler.get_pnj()->loadSprite(renderer, "./assets/sprites/Pnj.png", 7);
     SDL_StartTextInput(window);
     
     std::cout << "Entering main loop. Type 'quit' or 'exit' to close, or close the window.\n";
@@ -216,16 +216,16 @@ int main(int argc, char* argv[])
         }
 
         // RENDERING
-        SDL_SetRenderDrawColor(renderer, 0, 123, 0, 255); // Fond noir
+        SDL_SetRenderDrawColor(renderer, 0, 123, 0, 255); // Fond vert
         SDL_RenderClear(renderer);
         SDL_GetWindowSize(window, &window_width, &window_height);
 
-        Position pnj_screen = camera.pos_to_screen(pnj->getPosition(), window_height, window_width);
-        pnj->render(renderer, pnj_screen);
-        if (pnj->isPlayerInRange(player->getPosition())) {
-        pnj->renderDialogue(renderer, text_box.getFont(), window_width, window_height);
+        Position pnj_screen = camera.pos_to_screen(queueHandler.get_pnj()->getPosition(), window_height, window_width);
+        queueHandler.get_pnj()->render(renderer, pnj_screen);
+        if (queueHandler.get_pnj()->isPlayerInRange(player->getPosition())) {
+            queueHandler.get_pnj()->renderDialogue(renderer, text_box.getFont(), window_width, window_height);
         }   
-        std::string pnj_pos_text = "(" + std::to_string(int(pnj->getPosition().x)) + ", " + std::to_string(int(pnj->getPosition().y)) + ")";
+        std::string pnj_pos_text = "(" + std::to_string(int(queueHandler.get_pnj()->getPosition().x)) + ", " + std::to_string(int(queueHandler.get_pnj()->getPosition().y)) + ")";
         renderDebugText(renderer, text_box.getFont(), {pnj_screen.x, pnj_screen.y + 20}, pnj_pos_text);
 
         // Dessiner les ennemis
@@ -280,7 +280,7 @@ int main(int argc, char* argv[])
         delete item;
         world_items.eraseFront();
     }
-    delete pnj;
+    delete queueHandler.get_pnj();
     delete player;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

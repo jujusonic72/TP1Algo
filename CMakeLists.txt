@@ -20,6 +20,7 @@ add_executable(TP1Algo
         src/Commands/MoveCommand.cpp
         src/Commands/CancelCommand.cpp
         src/Commands/UseCommand.cpp
+        src/Commands/TalkCommand.cpp
     src/QueueHandler.cpp
     src/Player.cpp
     src/Position.cpp
