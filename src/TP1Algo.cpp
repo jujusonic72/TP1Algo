@@ -159,11 +159,11 @@ int main(int argc, char* argv[])
             {
                 text_box.handle_event(event);
             }
-            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_E) {
-            if (pnj->isPlayerInRange(player->getPosition())) {
-            pnj->interact();  // Passe au dialogue suivant
-    }
-}
+            // if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_E) {
+            // if (pnj->isPlayerInRange(player->getPosition())) {
+            // pnj->interact();  // Passe au dialogue suivant
+            // }
+            //}
         }
 
         if (!queueHandler.isEmpty())
