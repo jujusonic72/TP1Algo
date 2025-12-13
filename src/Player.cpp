@@ -126,27 +126,7 @@ bool Player::useItem(int index)
         return false;
     }
     
-    // Appliquer l'effet de l'item
-    switch (item->getType()) {
-        case ItemType::HEALTH_POTION:
-            health = (health + item->getValue() > max_health) ? max_health : health + item->getValue();
-            std::cout << "Used Health Potion! HP: " << health << "/" << max_health << "\n";
-            break;
-            
-        case ItemType::DAMAGE_BOOST:
-            damage += item->getValue();
-            std::cout << "Used Damage Boost! Damage: " << damage << "\n";
-            break;
-            
-        case ItemType::SPEED_BOOST:
-            speed += item->getValue();
-            std::cout << "Used Speed Boost! Speed: " << speed << "\n";
-            break;
-            
-        default:
-            std::cout << "Cannot use this item\n";
-            return false;
-    }
+    item->UseItem(this);
     
     // Retirer l'item de l'inventaire après utilisation
     delete inventory->removeItemAt(index);
@@ -158,6 +138,7 @@ void Player::SetHealth(int newHealth)
     health = newHealth;
     if (health > max_health) {
         health = max_health;
+
     }
     if (health < 0) {
         health = 0;
