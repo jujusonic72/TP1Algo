@@ -17,6 +17,9 @@
 #include "Enemy.h"
 #include "Position.h"
 #include "Item.h"
+#include "Items/ItemHealthPotion.h"
+#include "Items/ItemDamageBoost.h"
+#include "Items/ItemSpeedBoost.h"
 #include "Inventory.h"
 
 /*TODO:
@@ -94,46 +97,40 @@ int main(int argc, char* argv[])
     QueueHandler queueHandler;
     Player* player = new Player();
     
-    //Liste des ennemies
-    NodeList<Enemy*> enemies;
 
     // Spawn quelques ennemis
-    enemies.insertBack(new Enemy(50, 10, 2000, 100, {200, 200}));
-    enemies.insertBack(new Enemy(50, 10, 2000, 100, {-200, -200}));
-    enemies.insertBack(new Enemy(50, 10, 2000, 100, {300, 150}));
+    queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {200, 200}));
+    queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {-200, -200}));
+    queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {300, 150}));
     
     // NOUVEAU: Liste des items dans le monde
     NodeList<Item*> world_items;
     
     // Spawner des items de test
-    Item* potion1 = Item::createHealthPotion();
+    Item* potion1 = new ItemHealthPotion("Health Potion", "Restores 50 HP", 50);
     potion1->setPosition({100, 100});
     potion1->setOnGround(true);
     world_items.insertBack(potion1);
     
-    Item* potion2 = Item::createHealthPotion();
+    Item* potion2 = new ItemHealthPotion("Health Potion", "Restores 50 HP", 50);
     potion2->setPosition({-150, 200});
     potion2->setOnGround(true);
     world_items.insertBack(potion2);
     
-    Item* damage_boost = Item::createDamageBoost();
+    Item* damage_boost = new ItemDamageBoost("Damage Boost", "Increases damage by 10 for 30 seconds", 10, 30000);
     damage_boost->setPosition({200, -100});
     damage_boost->setOnGround(true);
     world_items.insertBack(damage_boost);
     
-    Item* speed_boost = Item::createSpeedBoost();
+    Item* speed_boost = new ItemSpeedBoost("Speed Boost", "Increases speed by 20 for 30 seconds", 20, 30000);
     speed_boost->setPosition({-200, -150});
     speed_boost->setOnGround(true);
     world_items.insertBack(speed_boost);
     
-    Item* treasure = Item::createTreasure();
-    treasure->setPosition({0, 250});
-    treasure->setOnGround(true);
-    world_items.insertBack(treasure);
     
     // Donner quelques items au joueur pour tester l'inventaire
-    player->pickupItem(Item::createHealthPotion());
-    player->pickupItem(Item::createDamageBoost());
+    player->pickupItem(new ItemHealthPotion("Health Potion", "Restores 50 HP", 50));
+    player->pickupItem(new ItemSpeedBoost("Speed Boost", "Increases speed by 20 for 30 seconds", 20, 30000));
 
     // Charger le sprite du joueur
     if (!player->loadSprite(renderer, "./assets/sprites/Hero.png", 8)) {
@@ -144,14 +141,15 @@ int main(int argc, char* argv[])
     queueHandler.set_player(player);
     TextBox text_box(&queueHandler, 10, window_height - 50, 400, 40);
     // Charger le sprite des ennemis
-    if(!enemies.empty())
+    if(!queueHandler.get_enemies().empty())
     {
-        auto it = enemies.begin();
-        while (it != enemies.end()) {
+        auto& enemies_list = queueHandler.get_enemies();
+        auto it = enemies_list.begin();
+        while (it != enemies_list.end()) {
             Enemy* enemy = *it;
             enemy->loadSprite(renderer, 5);
             ++it;
-        }      
+        }
     }
     
     Pnj* pnj = new Pnj({150, 150});
@@ -191,16 +189,6 @@ int main(int argc, char* argv[])
         {
             // Execute the current command
             queueHandler.front()->execute(delta_time);
-        }
-
-        if(!enemies.empty())
-        {
-            auto it = enemies.begin();
-            while (it != enemies.end()) {
-                Enemy* enemy = *it;
-                enemy->update(delta_time, player);
-                ++it;
-            }
         }
         
         //Logique de ramassage automatique des items proches
@@ -248,13 +236,11 @@ int main(int argc, char* argv[])
         renderDebugText(renderer, text_box.getFont(), {pnj_screen.x, pnj_screen.y + 20}, pnj_pos_text);
 
         // Dessiner les ennemis
-        for (auto & enemie : enemies)
-        {
-            Position enemy_world = enemie->getPosition();
-            Position enemy_screen = camera.pos_to_screen(enemy_world, window_height, window_width);
-
+        auto& enemies_list = queueHandler.get_enemies(); // reuse non-const ref
+        for (auto it = enemies_list.begin(); it != enemies_list.end(); ++it) {
+            Enemy* enemie = *it;
+            Position enemy_screen = camera.pos_to_screen(enemie->getPosition(), window_height, window_width);
             enemie->render(renderer, enemy_screen);
-
             // Debug text pour l'ennemi
             std::string enemy_pos_text = "(" + std::to_string(int(enemy_world.x)) + ", " + std::to_string(int(enemy_world.y)) + ")";
             renderDebugText(renderer, text_box.getFont(), enemy_screen, enemy_pos_text); 
@@ -280,11 +266,12 @@ int main(int argc, char* argv[])
     }
 
     // CLEANUP
-    while (!enemies.empty()) 
+    while (!queueHandler.get_enemies().empty()) 
     {
-        Enemy* enemy = *enemies.begin();
+        auto& enemies_list_cleanup = queueHandler.get_enemies();
+        Enemy* enemy = *enemies_list_cleanup.begin();
         delete enemy;
-        enemies.eraseFront();
+        enemies_list_cleanup.eraseFront();
     }
     
     // Cleanup des items
