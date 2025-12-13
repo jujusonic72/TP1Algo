@@ -37,17 +37,13 @@ public:
     bool loadSprite(SDL_Renderer* renderer, const char* filepath);
     void render(SDL_Renderer* renderer, Position screen_pos);
 
-    
-    // Méthode statique pour créer des items prédéfinis
-   
-
 protected:
     ItemType type_;
     std::string name_;
     std::string description_;
-    int value_;  // Valeur de l'effet (ex: +50 HP, +10 damage, etc.)
+    int value_;
     Position position_;
-    bool on_ground_;  // Est-ce que l'item est au sol ou dans l'inventaire?
+    bool on_ground_;
 
     SDL_Texture* sprite_texture_ = nullptr;
     int sprite_width_ = 0;

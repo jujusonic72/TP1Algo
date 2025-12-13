@@ -76,8 +76,6 @@ public:
         SDL_RenderTexture(renderer, sprite_texture, nullptr, &dest);
     }
 
-    void update(Uint64 delta_time, Player* player);  // Déclaration
-
 private:
     Uint64 last_attack_time = 0;
 
@@ -89,22 +87,3 @@ protected:
     int sprite_width = 0;
     int sprite_height = 0;
 };
-
-#include "Player.h"
-
-inline void Enemy::update(Uint64 delta_time, Player* player)
-{
-    Position player_pos = player->getPosition();
-    float dx = player_pos.x - world_pos.x;
-    float dy = player_pos.y - world_pos.y;
-    float distance = sqrt(dx * dx + dy * dy);
-
-    if (distance <= rng) {
-        Uint64 current_time = SDL_GetTicks();
-        if (current_time - last_attack_time >= spd) {
-            player->SetHealth(player->getHealth() - dmg);
-            last_attack_time = current_time;
-            std::cout << "Enemy attacked! Player HP: " << player->getHealth() << "\n";
-        }
-    }
-}
