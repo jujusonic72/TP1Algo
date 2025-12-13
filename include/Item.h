@@ -2,23 +2,24 @@
 #include <string>
 #include <SDL3/SDL.h>
 #include "Position.h"
-
+class Player;
 enum class ItemType
 {
     HEALTH_POTION,
     DAMAGE_BOOST,
     SPEED_BOOST,
-    TREASURE,
-    WEAPON,
-    KEY
+    
 };
 
 class Item
 {
 public:
     Item();
-    Item(ItemType type, const std::string& name, const std::string& description, int value);
-    ~Item();
+    Item(const std::string& name, const std::string& description, int value);
+
+    virtual ~Item();
+
+    virtual void UseItem(Player* player) = 0;
 
     // Getters
     ItemType getType() const { return type_; }
@@ -36,11 +37,9 @@ public:
     bool loadSprite(SDL_Renderer* renderer, const char* filepath);
     void render(SDL_Renderer* renderer, Position screen_pos);
 
+    
     // Méthode statique pour créer des items prédéfinis
-    static Item* createHealthPotion();
-    static Item* createDamageBoost();
-    static Item* createSpeedBoost();
-    static Item* createTreasure();
+   
 
 protected:
     ItemType type_;

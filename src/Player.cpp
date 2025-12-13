@@ -5,7 +5,7 @@
 Player::Player()
     : health(100), max_health(100), damage(10), attackRange(100), speed(50), position{0, 0}
 {
-    inventory = new Inventory(20); // Inventaire de 20 slots
+    inventory = new Inventory(4); // Inventaire de 20 slots
 }
 
 Player::~Player()
@@ -107,7 +107,7 @@ void Player::renderUI(SDL_Renderer* renderer, int window_width, int window_heigh
     
     // Afficher l'inventaire (dans le coin inférieur droit)
     int inv_width = 220;
-    int inv_height = 280;
+    int inv_height = 80;
     int inv_x = window_width - inv_width - 10;
     int inv_y = window_height - inv_height - 10;
     
@@ -126,31 +126,7 @@ bool Player::useItem(int index)
         return false;
     }
     
-    // Appliquer l'effet de l'item
-    switch (item->getType()) {
-        case ItemType::HEALTH_POTION:
-            health = (health + item->getValue() > max_health) ? max_health : health + item->getValue();
-            std::cout << "Used Health Potion! HP: " << health << "/" << max_health << "\n";
-            break;
-            
-        case ItemType::DAMAGE_BOOST:
-            damage += item->getValue();
-            std::cout << "Used Damage Boost! Damage: " << damage << "\n";
-            break;
-            
-        case ItemType::SPEED_BOOST:
-            speed += item->getValue();
-            std::cout << "Used Speed Boost! Speed: " << speed << "\n";
-            break;
-            
-        case ItemType::TREASURE:
-            std::cout << "Found treasure worth " << item->getValue() << " gold!\n";
-            break;
-            
-        default:
-            std::cout << "Cannot use this item\n";
-            return false;
-    }
+    item->UseItem(this);
     
     // Retirer l'item de l'inventaire après utilisation
     delete inventory->removeItemAt(index);
@@ -162,6 +138,7 @@ void Player::SetHealth(int newHealth)
     health = newHealth;
     if (health > max_health) {
         health = max_health;
+
     }
     if (health < 0) {
         health = 0;
