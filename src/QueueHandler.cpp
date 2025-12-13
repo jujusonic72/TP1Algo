@@ -5,11 +5,12 @@
 #include <vector>
 
 #include "Command.h"
-#include "../include/Commands/MoveCommand.h"
-#include "../include/Commands/CancelCommand.h"
-#include "../include/Commands/WaitCommand.h"
-#include "../include/Commands/AttackCommand.h"
-#include "../include/Commands/UseCommand.h"
+#include "Commands/MoveCommand.h"
+#include "Commands/CancelCommand.h"
+#include "Commands/WaitCommand.h"
+#include "Commands/AttackCommand.h"
+#include "Commands/UseCommand.h"
+#include "Commands/TalkCommand.h"
 
 void QueueHandler::enqueue(Command* command)
 {
@@ -159,13 +160,30 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
                 return nullptr;
             }
 
-            if(cmdComponents.size() != 1)
+            if(cmdComponents.size() != 1 && cmdComponents.size() != 2)
             {
-                std::cerr << "Error: Cancel command takes no arguments" << "\n";
+                std::cerr << "Error: Bad arguments for cancel command" << "\n";
                 return nullptr;
             }
 
-            command = new CancelCommand();
+            if(cmdComponents.size() == 2) {
+                if(cmdComponents[1].find_first_not_of("0123456789") != std::string::npos)
+                {
+                    std::cerr << "Error: Invalid cancel argument" << "\n";
+                    return nullptr;
+                }
+                int position = std::stoi(cmdComponents[1]);
+                if(position < 1 || position > size())
+                {
+                    std::cerr << "Error: Cancel position must be between 1 and " << size() << "\n";
+                    return nullptr;
+                }
+                command = new CancelCommand(position);
+                std::cout << "Cancelling current command at position " << position << "\n";
+                return command;
+            }
+
+            command = new CancelCommand(0);
             std::cout << "Cancelling current command" << "\n";
             return command;
         }
@@ -198,6 +216,21 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
               std::cerr << "Error: Invalid wait command / too many arguments" << "\n";
               return nullptr;
             }
+        }
+        else if(cmd == "talk")
+        {
+            if(cmdComponents.size() != 1)
+            {
+                std::cerr << "Error: Talk command takes no arguments" << "\n";
+                return nullptr;
+            }
+
+            command = new TalkCommand();
+            std::cout << "Talking to NPC" << "\n";
+
+            command->set_name(cmdComponents[0]);
+
+            return command;
         }
         else if(cmd == "quit" || cmd == "exit")
         {

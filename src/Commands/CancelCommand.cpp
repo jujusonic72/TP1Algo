@@ -3,7 +3,13 @@
 void CancelCommand::pre_execute(QueueHandler* queueHandler)
 {
     this->queueHandler = queueHandler;
-    queueHandler->nextCommand();
+    if (position_to_cancel > 0)
+    {
+        queueHandler->removeCommandAtPosition(position_to_cancel);
+    }
+    else {
+      queueHandler->nextCommand();
+    }
 }
 
 void CancelCommand::execute(Uint64 delta_time)
