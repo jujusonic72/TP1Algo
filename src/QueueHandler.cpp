@@ -56,49 +56,61 @@ int QueueHandler::size()
 
 Command* QueueHandler::parse_and_validate(const std::string& input)
 {
-    std::vector<std::string> cmdComponents;
+    NodeList<std::string> cmdComponents;  // NodeList au lieu de vector
     std::stringstream ss(input);
     std::string substr;
     while (ss >> substr)
     {
-        cmdComponents.push_back(substr);
+        cmdComponents.insertBack(substr);  // insertBack au lieu de push_back
     }
+    
     if (cmdComponents.empty())
     {
         std::cerr << "Invalid command string" << "\n";
         return nullptr;
     }
+    
     try
     {
-
-        //cmdEnum cmd = string_to_command(cmdComponents[0]);
-        std::string cmd = cmdComponents[0];
+        // Récupérer le premier élément
+        auto it = cmdComponents.begin();
+        std::string cmd = *it;
+        
         Command* command = nullptr;
+        
         if(cmd == "move")
         {
-                Position pos;
-                if (cmdComponents.size() == 3)
-                {
-                    pos = {std::stof(cmdComponents[1]), std::stof(cmdComponents[2])};
-                }
-                else
-                {
-                    std::cerr << "Error: Invalid position for move command" << "\n";
-                    return nullptr;
-                }
-                // Créer et retourner un MoveCommand
-                command = new MoveCommand(pos);
-                std::cout << "Moving to {" << pos.x << ", " << pos.y << "}";
-                std::cout << "\n";
-
-                command->set_name(cmdComponents[0] + " " + cmdComponents[1] + " " + cmdComponents[2]);
-
-                return command;
+            Position pos;
+            if (cmdComponents.size() == 3)
+            {
+                ++it;
+                std::string arg1 = *it;
+                ++it;
+                std::string arg2 = *it;
+                pos = {std::stof(arg1), std::stof(arg2)};
+            }
+            else
+            {
+                std::cerr << "Error: Invalid position for move command" << "\n";
+                return nullptr;
+            }
+            
+            command = new MoveCommand(pos);
+            std::cout << "Moving to {" << pos.x << ", " << pos.y << "}\n";
+            
+            // Reconstruire le nom
+            it = cmdComponents.begin();
+            std::string name = *it;
+            ++it;
+            name += " " + *it;
+            ++it;
+            name += " " + *it;
+            command->set_name(name);
+            
+            return command;
         }
         else if(cmd == "attack")
         {
-            // Créer et retourner un AttackCommand
-
             if(cmdComponents.size() != 1)
             {
                 std::cerr << "Error: Attack command takes no arguments" << "\n";
@@ -106,137 +118,144 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             }
 
             command = new AttackCommand();
-            std::cout << "Attacking" << "\n";
-
-            command->set_name(cmdComponents[0]);
-
+            std::cout << "Attacking\n";
+            command->set_name(cmd);
             return command;
         }
         else if(cmd == "gather")
         {
-            // Créer et retourner un GatherCommand
-            //command = new MoveCommand();
-            std::cout << "Gathering" << "\n";
-
-            // command->set_name(cmdComponents[0]);
-            
+            std::cout << "Gathering\n";
             return command;
         }
         else if(cmd == "use")
         {
             if (cmdComponents.size() == 2)
             {
-                if(cmdComponents[1].find_first_not_of("0123456789") != std::string::npos)
+                ++it;
+                std::string slotStr = *it;
+                
+                if(slotStr.find_first_not_of("0123456789") != std::string::npos)
                 {
-                    std::cerr << "Error: Invalid inventory slot" << "\n";
+                    std::cerr << "Error: Invalid inventory slot\n";
                     return nullptr;
                 }
-                else {
-                  int slot = std::stoi(cmdComponents[1]);
-                  if(slot < 1 || slot > player->getInventory()->getMaxCapacity())
-                  {
-                      std::cerr << "Error: Item slot must be between 1 and " << player->getInventory()->getMaxCapacity() << "\n";
-                      return nullptr;
-                  }
-
-                  command = new UseCommand(slot);
-                  std::cout << "Using: " << cmdComponents[1] << "\n";
-      
-                  command->set_name(cmdComponents[0] + " " + cmdComponents[1]);
-  
-                  return command;
+                
+                int slot = std::stoi(slotStr);
+                if(slot < 1 || slot > player->getInventory()->getMaxCapacity())
+                {
+                    std::cerr << "Error: Item slot must be between 1 and " 
+                              << player->getInventory()->getMaxCapacity() << "\n";
+                    return nullptr;
                 }
+
+                command = new UseCommand(slot);
+                std::cout << "Using: " << slotStr << "\n";
+                
+                it = cmdComponents.begin();
+                command->set_name(*it + " " + slotStr);
+                
+                return command;
             }
-            else {
-              std::cerr << "Error: Invalid item for use command" << "\n";
-              return nullptr;
+            else
+            {
+                std::cerr << "Error: Invalid item for use command\n";
+                return nullptr;
             }
         }
         else if(cmd == "cancel")
         {
             if(size() == 0)
             {
-                std::cerr << "Error: No command to cancel" << "\n";
+                std::cerr << "Error: No command to cancel\n";
                 return nullptr;
             }
 
             if(cmdComponents.size() != 1 && cmdComponents.size() != 2)
             {
-                std::cerr << "Error: Bad arguments for cancel command" << "\n";
+                std::cerr << "Error: Bad arguments for cancel command\n";
                 return nullptr;
             }
 
-            if(cmdComponents.size() == 2) {
-                if(cmdComponents[1].find_first_not_of("0123456789") != std::string::npos)
+            if(cmdComponents.size() == 2)
+            {
+                ++it;
+                std::string posStr = *it;
+                
+                if(posStr.find_first_not_of("0123456789") != std::string::npos)
                 {
-                    std::cerr << "Error: Invalid cancel argument" << "\n";
+                    std::cerr << "Error: Invalid cancel argument\n";
                     return nullptr;
                 }
-                int position = std::stoi(cmdComponents[1]);
+                
+                int position = std::stoi(posStr);
                 if(position < 1 || position > size())
                 {
                     std::cerr << "Error: Cancel position must be between 1 and " << size() << "\n";
                     return nullptr;
                 }
+                
                 command = new CancelCommand(position);
                 std::cout << "Cancelling current command at position " << position << "\n";
                 return command;
             }
 
             command = new CancelCommand(0);
-            std::cout << "Cancelling current command" << "\n";
+            std::cout << "Cancelling current command\n";
             return command;
         }
         else if(cmd == "wait")
         {
             if(cmdComponents.size() == 2)
             {
-              if(cmdComponents[1].find_first_not_of("0123456789") != std::string::npos)
-              {
-                  std::cerr << "Error: Invalid wait time" << "\n";
-                  return nullptr;
-              }
-              else {
-                  int durationMs = std::stoi(cmdComponents[1]);
-                  if(durationMs <= 0)
-                  {
-                      std::cerr << "Error: Wait time must be greater than 0" << "\n";
-                      return nullptr;
-                  }
+                ++it;
+                std::string durationStr = *it;
+                
+                if(durationStr.find_first_not_of("0123456789") != std::string::npos)
+                {
+                    std::cerr << "Error: Invalid wait time\n";
+                    return nullptr;
+                }
+                
+                int durationMs = std::stoi(durationStr);
+                if(durationMs <= 0)
+                {
+                    std::cerr << "Error: Wait time must be greater than 0\n";
+                    return nullptr;
+                }
 
-                  command = new WaitCommand(durationMs);
-                  std::cout << "Waiting for " << durationMs << " milliseconds" << "\n";
-
-                  command->set_name(cmdComponents[0] + " " + cmdComponents[1] + "ms");
-
-                  return command;
-              }
+                command = new WaitCommand(durationMs);
+                std::cout << "Waiting for " << durationMs << " milliseconds\n";
+                
+                it = cmdComponents.begin();
+                command->set_name(*it + " " + durationStr + "ms");
+                
+                return command;
             }
-            else {
-              std::cerr << "Error: Invalid wait command / too many arguments" << "\n";
-              return nullptr;
+            else
+            {
+                std::cerr << "Error: Invalid wait command / too many arguments\n";
+                return nullptr;
             }
         }
         else if(cmd == "talk")
         {
             if(cmdComponents.size() != 1)
             {
-                std::cerr << "Error: Talk command takes no arguments" << "\n";
+                std::cerr << "Error: Talk command takes no arguments\n";
                 return nullptr;
             }
 
             command = new TalkCommand();
-            std::cout << "Talking to NPC" << "\n";
-
-            command->set_name(cmdComponents[0]);
-
+            std::cout << "Talking to NPC\n";
+            command->set_name(cmd);
             return command;
         }
         else if(cmd == "quit" || cmd == "exit")
         {
-            std::cout << "Exiting the game." << "\n";
+            std::cout << "Exiting the game.\n";
             exit(0);
         }
+        
         return nullptr;
     }
     catch (const std::invalid_argument& e)
@@ -244,8 +263,6 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
         std::cerr << e.what() << "\n";
         return nullptr;
     }
-    
-    
 }
 
 void QueueHandler::renderQueue(SDL_Renderer* renderer, TTF_Font* font, int x, int y)
