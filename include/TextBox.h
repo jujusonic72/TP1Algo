@@ -74,12 +74,11 @@ inline void TextBox::handle_event(const SDL_Event& e)
                     std::cout << "Adding to history: " << text_ << "\n";
                     history_->insertBack(text_);
                     std::cout << "History size: " << history_->size() << "\n";
-                    // Parse & syntax-check
                     Command* cmd = queue_handler_->parse_and_validate(text_);
                     if (cmd)
                     {
                         cmd->pre_execute(queue_handler_);
-                        if (cmd->is_edit_command()) delete cmd;  // Clean up if it's an edit command
+                        if (cmd->is_edit_command()) delete cmd;
                     }
                     else
                     {
@@ -154,7 +153,7 @@ inline void TextBox::render(SDL_Renderer* renderer)
     SDL_RenderFillRect(renderer, &box_rect);
     if (cursor_visible_) {
     // Calculer la position X du curseur
-    int cursor_x = box_pos_.x + 5;  // Commencer au padding
+    int cursor_x = box_pos_.x + 5;
     
     if (cursor_pos_ > 0 && !text_.empty()) {
     std::string text_before_cursor = text_.substr(0, cursor_pos_);
@@ -174,8 +173,8 @@ inline void TextBox::render(SDL_Renderer* renderer)
     // Dessiner une ligne verticale blanche
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // Blanc
     SDL_RenderLine(renderer, 
-                   cursor_x, box_pos_.y + 5,           // Point de départ (haut)
-                   cursor_x, box_pos_.y + height_ - 5  // Point d'arrivée (bas)
+                   cursor_x, box_pos_.y + 5,
+                   cursor_x, box_pos_.y + height_ - 5
     );
 }
     if (!text_.empty()) {
@@ -195,12 +194,11 @@ inline void TextBox::render(SDL_Renderer* renderer)
             return;
         }
     
-        // Afficher les dimensions pour déboguer
         //std::cout << "Text surface: w=" << text_surface->w << " h=" << text_surface->h << "\n";
     
     
         SDL_FRect text_rect = {
-            static_cast<float>(box_pos_.x + 5),  // Petit padding
+            static_cast<float>(box_pos_.x + 5),
             static_cast<float>(box_pos_.y + 5),
             static_cast<float>(text_surface->w),
             static_cast<float>(text_surface->h)
