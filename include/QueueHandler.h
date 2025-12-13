@@ -1,12 +1,8 @@
 #pragma once
 #include "NodeList.h"
 #include <string>
-#include <stdexcept>
-#include <functional>
 #include <SDL3_ttf/SDL_ttf.h>
-
 #include "Player.h"
-#include "NodeList.h"
 #include "Enemy.h"
 #include "Pnj.h"
 
