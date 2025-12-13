@@ -7,6 +7,7 @@
 
 #include <SDL3_ttf/SDL_ttf.h>
 #include "Camera.h"
+#include "Pnj.h"
 #include "TextBox.h"
 #include <SDL3_image/SDL_image.h>
 #include "Player.h"
@@ -132,6 +133,8 @@ int main(int argc, char* argv[])
         }      
     }
     
+    Pnj* pnj = new Pnj({150, 150});
+    pnj->loadSprite(renderer, "./assets/sprites/Pnj.png", 8);
     SDL_StartTextInput(window);
     
     std::cout << "Entering main loop. Type 'quit' or 'exit' to close, or close the window.\n";
@@ -156,6 +159,11 @@ int main(int argc, char* argv[])
             {
                 text_box.handle_event(event);
             }
+            // if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_E) {
+            // if (pnj->isPlayerInRange(player->getPosition())) {
+            // pnj->interact();  // Passe au dialogue suivant
+            // }
+            //}
         }
 
         if (!queueHandler.isEmpty())
@@ -208,7 +216,13 @@ int main(int argc, char* argv[])
         Position player_screen = camera.pos_to_screen(player_world, window_height, window_width);
 
         player->render(renderer, player_screen);
-        
+
+        Position pnj_screen = camera.pos_to_screen(pnj->getPosition(), window_height, window_width);
+        pnj->render(renderer, pnj_screen);
+        if (pnj->isPlayerInRange(player->getPosition())) {
+        pnj->renderDialogue(renderer, text_box.getFont(), window_width, window_height);
+        }   
+
         // Dessiner les ennemis
         for (auto & enemie : enemies)
         {
@@ -243,14 +257,14 @@ int main(int argc, char* argv[])
         enemies.eraseFront();
     }
     
-    // NOUVEAU: Cleanup des items
+    // Cleanup des items
     while (!world_items.empty()) 
     {
         Item* item = *world_items.begin();
         delete item;
         world_items.eraseFront();
     }
-    
+    delete pnj;
     delete player;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
