@@ -148,8 +148,8 @@ void Inventory::render(SDL_Renderer* renderer, int x, int y, int width, int heig
 
         // Dessiner l'item (version simplifiée sans sprite)
         SDL_FRect item_rect = {
-            static_cast<float>(slot_x - 15),
-            static_cast<float>(slot_y - 15),
+            static_cast<float>(slot_x - 20),
+            static_cast<float>(slot_y - 20),
             30.0f,
             30.0f
         };
@@ -165,15 +165,7 @@ void Inventory::render(SDL_Renderer* renderer, int x, int y, int width, int heig
             case ItemType::SPEED_BOOST:
                 SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
                 break;
-            case ItemType::TREASURE:
-                SDL_SetRenderDrawColor(renderer, 255, 215, 0, 255);
-                break;
-            case ItemType::WEAPON:
-                SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255);
-                break;
-            case ItemType::KEY:
-                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-                break;
+           
         }
         SDL_RenderFillRect(renderer, &item_rect);
 

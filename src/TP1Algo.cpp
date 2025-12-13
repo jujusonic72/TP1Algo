@@ -17,6 +17,9 @@
 #include "Enemy.h"
 #include "Position.h"
 #include "Item.h"
+#include "Items/ItemHealthPotion.h"
+#include "Items/ItemDamageBoost.h"
+#include "Items/ItemSpeedBoost.h"
 #include "Inventory.h"
 
 /*TODO:
@@ -83,34 +86,30 @@ int main(int argc, char* argv[])
     NodeList<Item*> world_items;
     
     // Spawner des items de test
-    Item* potion1 = Item::createHealthPotion();
+    Item* potion1 = new ItemHealthPotion("Health Potion", "Restores 50 HP", 50);
     potion1->setPosition({100, 100});
     potion1->setOnGround(true);
     world_items.insertBack(potion1);
     
-    Item* potion2 = Item::createHealthPotion();
+    Item* potion2 = new ItemHealthPotion("Health Potion", "Restores 50 HP", 50);
     potion2->setPosition({-150, 200});
     potion2->setOnGround(true);
     world_items.insertBack(potion2);
     
-    Item* damage_boost = Item::createDamageBoost();
+    Item* damage_boost = new ItemDamageBoost("Damage Boost", "Increases damage by 10 for 30 seconds", 10, 30000);
     damage_boost->setPosition({200, -100});
     damage_boost->setOnGround(true);
     world_items.insertBack(damage_boost);
     
-    Item* speed_boost = Item::createSpeedBoost();
+    Item* speed_boost = new ItemSpeedBoost("Speed Boost", "Increases speed by 20 for 30 seconds", 20, 30000);
     speed_boost->setPosition({-200, -150});
     speed_boost->setOnGround(true);
     world_items.insertBack(speed_boost);
     
-    Item* treasure = Item::createTreasure();
-    treasure->setPosition({0, 250});
-    treasure->setOnGround(true);
-    world_items.insertBack(treasure);
     
     // Donner quelques items au joueur pour tester l'inventaire
-    player->pickupItem(Item::createHealthPotion());
-    player->pickupItem(Item::createDamageBoost());
+    player->pickupItem(new ItemHealthPotion("Health Potion", "Restores 50 HP", 50));
+    player->pickupItem(new ItemSpeedBoost("Speed Boost", "Increases speed by 20 for 30 seconds", 20, 30000));
 
     // Charger le sprite du joueur
     if (!player->loadSprite(renderer, "./assets/sprites/Hero.png", 16)) {

@@ -12,9 +12,8 @@ Item::Item()
 {
 }
 
-Item::Item(ItemType type, const std::string& name, const std::string& description, int value)
-    : type_(type),
-      name_(name),
+Item::Item( const std::string& name, const std::string& description, int value)
+    : name_(name),
       description_(description),
       value_(value),
       position_{0, 0},
@@ -65,7 +64,7 @@ void Item::render(SDL_Renderer* renderer, Position screen_pos)
         // Couleur selon le type
         switch (type_) {
             case ItemType::HEALTH_POTION:
-                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Rouge
+                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // green
                 break;
             case ItemType::DAMAGE_BOOST:
                 SDL_SetRenderDrawColor(renderer, 255, 165, 0, 255); // Orange
@@ -73,16 +72,8 @@ void Item::render(SDL_Renderer* renderer, Position screen_pos)
             case ItemType::SPEED_BOOST:
                 SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255); // Cyan
                 break;
-            case ItemType::TREASURE:
-                SDL_SetRenderDrawColor(renderer, 255, 215, 0, 255); // Or
-                break;
-            case ItemType::WEAPON:
-                SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255); // Gris
-                break;
-            case ItemType::KEY:
-                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Jaune
-                break;
         }
+
         SDL_RenderFillRect(renderer, &rect);
     } else {
         SDL_FRect dest = {
@@ -95,23 +86,5 @@ void Item::render(SDL_Renderer* renderer, Position screen_pos)
     }
 }
 
-// Factory methods pour créer des items prédéfinis
-Item* Item::createHealthPotion()
-{
-    return new Item(ItemType::HEALTH_POTION, "Health Potion", "Restores 50 HP", 50);
-}
 
-Item* Item::createDamageBoost()
-{
-    return new Item(ItemType::DAMAGE_BOOST, "Damage Boost", "Increases damage by 10 for 30 seconds", 10);
-}
 
-Item* Item::createSpeedBoost()
-{
-    return new Item(ItemType::SPEED_BOOST, "Speed Boost", "Increases movement speed by 20 for 30 seconds", 20);
-}
-
-Item* Item::createTreasure()
-{
-    return new Item(ItemType::TREASURE, "Treasure", "A valuable treasure", 100);
-}

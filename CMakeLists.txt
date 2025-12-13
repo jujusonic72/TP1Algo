@@ -26,6 +26,12 @@ add_executable(TP1Algo
     src/Commands/CancelCommand.cpp
     src/Commands/WaitCommand.cpp
     src/Commands/AttackCommand.cpp
+        src/Commands/MoveCommand.cpp
+    src/Commands/CancelCommand.cpp
+    src/Commands/WaitCommand.cpp
+        src/Items/ItemDamageBoost.cpp
+        src/Items/ItemHealthPotion.cpp
+        src/Items/ItemSpeedBoost.cpp
 )
 
 # Indiquez où se trouvent vos headers
