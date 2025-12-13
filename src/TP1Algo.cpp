@@ -245,6 +245,8 @@ int main(int argc, char* argv[])
             if (item->isOnGround()) {
                 Position item_screen = camera.pos_to_screen(item->getPosition(), window_height, window_width);
                 item->render(renderer, item_screen);
+                std::string enemy_pos_text = "(" + std::to_string(int(item->getPosition().x)) + ", " + std::to_string(int(item->getPosition().y)) + ")";
+                renderDebugText(renderer, text_box.getFont(), item_screen, enemy_pos_text); 
             }
         }
         // Dessiner le joueur
