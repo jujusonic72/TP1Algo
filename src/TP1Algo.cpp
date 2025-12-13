@@ -73,13 +73,11 @@ int main(int argc, char* argv[])
     QueueHandler queueHandler;
     Player* player = new Player();
     
-    //Liste des ennemies
-    NodeList<Enemy*> enemies;
 
     // Spawn quelques ennemis
-    enemies.insertBack(new Enemy(50, 10, 2000, 100, {200, 200}));
-    enemies.insertBack(new Enemy(50, 10, 2000, 100, {-200, -200}));
-    enemies.insertBack(new Enemy(50, 10, 2000, 100, {300, 150}));
+    queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {200, 200}));
+    queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {-200, -200}));
+    queueHandler.add_enemy(new Enemy(50, 10, 2000, 100, {300, 150}));
     
     // NOUVEAU: Liste des items dans le monde
     NodeList<Item*> world_items;
@@ -123,14 +121,15 @@ int main(int argc, char* argv[])
     queueHandler.set_player(player);
     TextBox text_box(&queueHandler, 10, window_height - 50, 400, 40);
     // Charger le sprite des ennemis
-    if(!enemies.empty())
+    if(!queueHandler.get_enemies().empty())
     {
-        auto it = enemies.begin();
-        while (it != enemies.end()) {
+        auto& enemies_list = queueHandler.get_enemies();
+        auto it = enemies_list.begin();
+        while (it != enemies_list.end()) {
             Enemy* enemy = *it;
             enemy->loadSprite(renderer, 8);
             ++it;
-        }      
+        }
     }
     
     Pnj* pnj = new Pnj({150, 150});
@@ -170,16 +169,6 @@ int main(int argc, char* argv[])
         {
             // Execute the current command
             queueHandler.front()->execute(delta_time);
-        }
-
-        if(!enemies.empty())
-        {
-            auto it = enemies.begin();
-            while (it != enemies.end()) {
-                Enemy* enemy = *it;
-                enemy->update(delta_time, player);
-                ++it;
-            }
         }
         
         //Logique de ramassage automatique des items proches
@@ -224,10 +213,11 @@ int main(int argc, char* argv[])
         }   
 
         // Dessiner les ennemis
-        for (auto & enemie : enemies)
-        {
+        auto& enemies_list = queueHandler.get_enemies(); // reuse non-const ref
+        for (auto it = enemies_list.begin(); it != enemies_list.end(); ++it) {
+            Enemy* enemie = *it;
             Position enemy_screen = camera.pos_to_screen(enemie->getPosition(), window_height, window_width);
-            enemie->render(renderer, enemy_screen); 
+            enemie->render(renderer, enemy_screen);
         }
         
         queueHandler.renderQueue(renderer, text_box.getFont(), 10, window_height - 100);
@@ -250,11 +240,12 @@ int main(int argc, char* argv[])
     }
 
     // CLEANUP
-    while (!enemies.empty()) 
+    while (!queueHandler.get_enemies().empty()) 
     {
-        Enemy* enemy = *enemies.begin();
+        auto& enemies_list_cleanup = queueHandler.get_enemies();
+        Enemy* enemy = *enemies_list_cleanup.begin();
         delete enemy;
-        enemies.eraseFront();
+        enemies_list_cleanup.eraseFront();
     }
     
     // Cleanup des items

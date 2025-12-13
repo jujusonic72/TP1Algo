@@ -1,4 +1,5 @@
 #include "QueueHandler.h"
+#include <cmath>
 #include <sstream>
 #include <iostream>
 #include <vector>
@@ -7,6 +8,7 @@
 #include "../include/Commands/MoveCommand.h"
 #include "../include/Commands/CancelCommand.h"
 #include "../include/Commands/WaitCommand.h"
+#include "../include/Commands/AttackCommand.h"
 
 void QueueHandler::enqueue(Command* command)
 {
@@ -94,7 +96,14 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
         else if(cmd == "attack")
         {
             // Créer et retourner un AttackCommand
-            //command = new MoveCommand();
+
+            if(cmdComponents.size() != 1)
+            {
+                std::cerr << "Error: Attack command takes no arguments" << "\n";
+                return nullptr;
+            }
+
+            command = new AttackCommand();
             std::cout << "Attacking" << "\n";
 
             command->set_name(cmdComponents[0]);
@@ -107,7 +116,7 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
             //command = new MoveCommand();
             std::cout << "Gathering" << "\n";
 
-            command->set_name(cmdComponents[0]);
+            // command->set_name(cmdComponents[0]);
             
             return command;
         }
@@ -134,6 +143,13 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
                 std::cerr << "Error: No command to cancel" << "\n";
                 return nullptr;
             }
+
+            if(cmdComponents.size() != 1)
+            {
+                std::cerr << "Error: Cancel command takes no arguments" << "\n";
+                return nullptr;
+            }
+
             command = new CancelCommand();
             std::cout << "Cancelling current command" << "\n";
             return command;
