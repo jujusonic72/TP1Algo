@@ -21,6 +21,7 @@ public:
     TTF_Font* getFont() const { return font_; }
     void handle_event(const SDL_Event& e);
     void render(SDL_Renderer* renderer);
+    void set_box_pos(Position pos) {box_pos_ = pos;}
 private:
     string text_;
     NodeList<string>* history_;

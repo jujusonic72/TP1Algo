@@ -255,7 +255,7 @@ int main(int argc, char* argv[])
         player->render(renderer, player_screen);
         std::string player_pos_text = "(" + std::to_string(int(player_world.x)) + ", " + std::to_string(int(player_world.y)) + ")";
         renderDebugText(renderer, text_box.getFont(), {player_screen.x, player_screen.y + 30}, player_pos_text);
-
+        text_box.set_box_pos({10, float(window_height - 50)});
         text_box.render(renderer);
         
         // NOUVEAU: Afficher l'UI du joueur (barre de vie + inventaire)
