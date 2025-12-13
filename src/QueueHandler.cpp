@@ -9,6 +9,7 @@
 #include "../include/Commands/CancelCommand.h"
 #include "../include/Commands/WaitCommand.h"
 #include "../include/Commands/AttackCommand.h"
+#include "../include/Commands/UseCommand.h"
 
 void QueueHandler::enqueue(Command* command)
 {
@@ -122,19 +123,33 @@ Command* QueueHandler::parse_and_validate(const std::string& input)
         }
         else if(cmd == "use")
         {
-            if (cmdComponents.size() != 2)
+            if (cmdComponents.size() == 2)
             {
-                std::cerr << "Error: Invalid item for use command" << "\n";
-                return nullptr;
+                if(cmdComponents[1].find_first_not_of("0123456789") != std::string::npos)
+                {
+                    std::cerr << "Error: Invalid inventory slot" << "\n";
+                    return nullptr;
+                }
+                else {
+                  int slot = std::stoi(cmdComponents[1]);
+                  if(slot < 1 || slot > player->getInventory()->getMaxCapacity())
+                  {
+                      std::cerr << "Error: Item slot must be between 1 and " << player->getInventory()->getMaxCapacity() << "\n";
+                      return nullptr;
+                  }
+
+                  command = new UseCommand(slot);
+                  std::cout << "Using: " << cmdComponents[1] << "\n";
+      
+                  command->set_name(cmdComponents[0] + " " + cmdComponents[1]);
+  
+                  return command;
+                }
             }
-            // Créer et retourner un UseCommand
-            //command = new MoveCommand();
-            std::cout << "Using: " << cmdComponents[1];
-            std::cout << "\n";
-
-            command->set_name(cmdComponents[0]);
-
-            return command;
+            else {
+              std::cerr << "Error: Invalid item for use command" << "\n";
+              return nullptr;
+            }
         }
         else if(cmd == "cancel")
         {
