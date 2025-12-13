@@ -219,13 +219,6 @@ int main(int argc, char* argv[])
         SDL_SetRenderDrawColor(renderer, 0, 123, 0, 255); // Fond noir
         SDL_RenderClear(renderer);
         SDL_GetWindowSize(window, &window_width, &window_height);
-        
-        // Dessiner le joueur
-        Position player_world = player->getPosition();
-        Position player_screen = camera.pos_to_screen(player_world, window_height, window_width);
-        player->render(renderer, player_screen);
-        std::string player_pos_text = "(" + std::to_string(int(player_world.x)) + ", " + std::to_string(int(player_world.y)) + ")";
-        renderDebugText(renderer, text_box.getFont(), {player_screen.x, player_screen.y + 30}, player_pos_text);
 
         Position pnj_screen = camera.pos_to_screen(pnj->getPosition(), window_height, window_width);
         pnj->render(renderer, pnj_screen);
@@ -254,6 +247,12 @@ int main(int argc, char* argv[])
                 item->render(renderer, item_screen);
             }
         }
+        // Dessiner le joueur
+        Position player_world = player->getPosition();
+        Position player_screen = camera.pos_to_screen(player_world, window_height, window_width);
+        player->render(renderer, player_screen);
+        std::string player_pos_text = "(" + std::to_string(int(player_world.x)) + ", " + std::to_string(int(player_world.y)) + ")";
+        renderDebugText(renderer, text_box.getFont(), {player_screen.x, player_screen.y + 30}, player_pos_text);
 
         text_box.render(renderer);
         
