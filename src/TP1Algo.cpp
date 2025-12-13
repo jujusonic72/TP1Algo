@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
     }
     
     Pnj* pnj = new Pnj({150, 150});
-    pnj->loadSprite(renderer, "./assets/sprites/PNJ.png", 8);
+    pnj->loadSprite(renderer, "./assets/sprites/Pnj.png", 8);
     SDL_StartTextInput(window);
     
     std::cout << "Entering main loop. Type 'quit' or 'exit' to close, or close the window.\n";

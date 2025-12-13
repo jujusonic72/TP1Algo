@@ -7,9 +7,9 @@ Pnj::Pnj(Position spawn_pos)
     : range(100), position(spawn_pos), current_dialogue_index(0)
 {
     dialogues.insertBack("Bonjour aventurier !");
-    dialogues.insertBack("Les monstres sont dangereux par ici...");
-    dialogues.insertBack("Fais attention à toi !");
-    dialogues.insertBack("Bonne chance !");
+    dialogues.insertBack("C'est une merveilleuse journée pour pêcher n'est-ce pas?");
+    dialogues.insertBack("hu-huh!");
+    dialogues.insertBack("Bonne chance aventurier !");
 }
 
 Pnj::~Pnj()
